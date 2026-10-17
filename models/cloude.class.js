@@ -2,6 +2,7 @@ class Cloude extends MovableObject {
     y = 20;
     width = 500;
     height = 250;
+    
 
     constructor() {
 
@@ -13,8 +14,12 @@ class Cloude extends MovableObject {
     }
 
     animate() {
+        this.moveLeft();
+    }
+
+    moveLeft(){
         setInterval(() => {
-            this.x -= 0.2;
+            this.x -= this.speed;
         }, 1000 / 60)
 
     }
