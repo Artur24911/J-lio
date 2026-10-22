@@ -2,17 +2,11 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-
 function init(){
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
-    
-  
-    console.log('My Charakter is', world.character);
-    
+    console.log('My Charakter is', world.character);    
 }
-
-
 
 window.addEventListener('keydown', (event) => {
     let key = event.key;
@@ -31,7 +25,6 @@ window.addEventListener('keydown', (event) => {
     if(key == "Space"){
         keyboard.SPACE = true;
     }
-
 });
 
 window.addEventListener('keyup', (event) => {
@@ -51,5 +44,4 @@ window.addEventListener('keyup', (event) => {
     if(key == "Space"){
         keyboard.SPACE = false;
     }
-
 });
