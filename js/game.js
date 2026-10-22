@@ -12,39 +12,43 @@ function init(){
     
 }
 
-window.addEventListener('keydown', (e) => {
-    if(e.keyCode == 39){
+
+
+window.addEventListener('keydown', (event) => {
+    let key = event.key;
+    if(key == "ArrowRight"){
         keyboard.RIGHT = true;
     }
-    if(e.keyCode == 37){
+    if(key == "ArrowLeft"){
         keyboard.LEFT = true;
     }
-    if(e.keyCode == 38){
+    if(key == "ArrowUp"){
         keyboard.UP = true;
     }
-    if(e.keyCode == 40){
+    if(key == "ArrowDown"){
         keyboard.DOWN = true;
     }
-    if(e.keyCode == 32){
+    if(key == "Space"){
         keyboard.SPACE = true;
     }
 
 });
 
-window.addEventListener('keyup', (e) => {
-    if(e.keyCode == 39){
+window.addEventListener('keyup', (event) => {
+    let key = event.key;
+    if(key == "ArrowRight"){
         keyboard.RIGHT = false;
     }
-    if(e.keyCode == 37){
+    if(key == "ArrowLeft"){
         keyboard.LEFT = false;
     }
-    if(e.keyCode == 38){
+    if(key == "ArrowUp"){
         keyboard.UP = false;
     }
-    if(e.keyCode == 40){
+    if(key == "ArrowDown"){
         keyboard.DOWN = false;
     }
-    if(e.keyCode == 32){
+    if(key == "Space"){
         keyboard.SPACE = false;
     }
 
