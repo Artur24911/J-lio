@@ -1,4 +1,5 @@
 class ThrowableObject extends MovableObject{
+    splashs;
 
     IMAGES_BOTTLEROTATION = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -29,6 +30,9 @@ class ThrowableObject extends MovableObject{
         this.height = 60;
         this.width = 50;
         this.throw();
+        this.animate();
+        this.loadImages(this.IMAGES_BOTTLEROTATION);
+        this.loadImages(this.IMAGES_BOTTLESPLASH);
     }
 
     throw(){
@@ -38,4 +42,20 @@ class ThrowableObject extends MovableObject{
             this.x += 10;
         }, 25);
     }
+
+    animate(){
+        setInterval(() => {
+            this.playAnimation(this.IMAGES_BOTTLEROTATION);
+        }, 1000/ 20);
+
+        setInterval(() => {
+            this.splashs(this.IMAGES_BOTTLESPLASH);
+        }, 1000/ 20);
+
+       }
+
+       splash(){
+        return this.splashs
+       };
+
 }

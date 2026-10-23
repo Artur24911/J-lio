@@ -1,7 +1,5 @@
 class MovableObject extends DrawableObject{
     
-    
-   
     speed = 0.2;
     otherDirection = false;
     speedY = 0;
@@ -17,7 +15,6 @@ class MovableObject extends DrawableObject{
 
     constructor(){
         super();
-        
     }
 
     applyGravity() {
@@ -37,23 +34,12 @@ class MovableObject extends DrawableObject{
         }
     }
 
-    
-   
-   
-    
-
     moveRight() {
         this.x += this.speed;
-
-
     }
 
-
     moveLeft() {
-
         this.x -= this.speed;
-
-
 
     }
 
@@ -63,7 +49,6 @@ class MovableObject extends DrawableObject{
         this.img = this.imageCache[path];
         this.currentImage++;
     }
-
 
     jump() {
         this.speedY = 30;
@@ -96,7 +81,6 @@ class MovableObject extends DrawableObject{
             this.energy = 0;
         }else{
             this.lastHit = new Date().getTime();
-
         }
     }
 

@@ -8,6 +8,7 @@ class World {
     camera_x = 0;
     statusBar = new StatusBar();
     throwableObjects = [];
+    bottle = new ThrowableObject();
 
 
 
@@ -46,6 +47,14 @@ class World {
                 }
             });
     }
+
+    checkCollisionsBottle(){
+         this.level.enemies.forEach((enemy) => {
+            if(this.bottle.isColliding(enemy)){
+                this.bottle.splash();
+            }
+            });
+            }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
