@@ -1,5 +1,5 @@
 class ThrowableObject extends MovableObject{
-    splashs;
+    
 
     IMAGES_BOTTLEROTATION = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -48,9 +48,7 @@ class ThrowableObject extends MovableObject{
             this.playAnimation(this.IMAGES_BOTTLEROTATION);
         }, 1000/ 20);
 
-        setInterval(() => {
-            this.splashs(this.IMAGES_BOTTLESPLASH);
-        }, 1000/ 20);
+        
 
        }
 

@@ -1,14 +1,14 @@
-class Endboss extends MovableObject{
+class Endboss extends MovableObject {
 
     height = 400;
     width = 230;
-    y= 45;
+    y = 45;
 
     offset = {
-        top: -100,
-        left: 140,
-        right: 50,
-        bottom: -20,
+        top: 100,
+        left: 40,
+        right: 30,
+        bottom: 40,
     };
 
 
@@ -53,31 +53,31 @@ class Endboss extends MovableObject{
         'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
-    
+
     hadFirstContact = false;
 
 
-    constructor(){
+    constructor() {
         super().loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_WALKING);
-        this.x = 2550;
+        this.x = 450;
         this.animate();
     }
 
-    animate(){
+    animate() {
         let i = 0;
         setInterval(() => {
-            if (i < 10){
-            this.playAnimation(this.IMAGES_ALERT);
-        } else {
-            this.playAnimation(this.IMAGES_WALKING);
-        } 
-        i++;
-        if(world.charakter.x > 2200 && !hadFirstContact){
-            i = 0;
-            hadFirstContact = true;
+            if (i < 10) {
+                this.playAnimation(this.IMAGES_ALERT);
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
             }
-        },200);
+            i++;
+            if (world.character.x > 2200 && !this.hadFirstContact) {
+                i = 0;
+                this.hadFirstContact = true;
+            }
+        }, 200);
     }
 }
