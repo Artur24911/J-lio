@@ -6,6 +6,7 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+    statusBar = new StatusBar();
 
 
 
@@ -27,7 +28,7 @@ class World {
             this.level.enemies.forEach((enemy) => {
                 if(this.character.isColliding(enemy)){
                 this.character.hit();
-                console.log('hit', this.character.energy);
+                this.statusBar.setPercentage(this.character.energy);
                 }
             });
         }, 200);
@@ -39,8 +40,12 @@ class World {
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.cloude);
         this.addObjectsToMap(this.level.enemies);
+        this.ctx.translate(-this.camera_x, 0);
+        this.addToMap(this.statusBar);
+        this.ctx.translate(this.camera_x, 0);
         this.addToMap(this.character);
         this.ctx.translate(-this.camera_x, 0);
+        
     
         
         
