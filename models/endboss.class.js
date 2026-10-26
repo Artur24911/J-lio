@@ -1,8 +1,11 @@
 class Endboss extends MovableObject {
-
+    energy = 3;
     height = 400;
     width = 230;
     y = 45;
+    speed = 4;
+    isChasing = false;
+    deathStarted = false;
 
     offset = {
         top: 100,
@@ -61,23 +64,52 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_WALKING);
-        this.x = 450;
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_DEAD);
+        this.x = 2550;
         this.animate();
     }
 
-    animate() {
-        let i = 0;
-        setInterval(() => {
-            if (i < 10) {
-                this.playAnimation(this.IMAGES_ALERT);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
+   animate() {
+    let i = 0;
+    setInterval(() => {
+        if (this.isDead()) {
+            if (!this.deathStarted) {
+                this.deathStarted = true;
+                this.currentImage = 0;
             }
-            i++;
-            if (world && world.character.x > 2200 && !this.hadFirstContact) {
-                i = 0;
-                this.hadFirstContact = true;
+            if (this.currentImage < this.IMAGES_DEAD.length) {
+                this.playAnimation(this.IMAGES_DEAD);
             }
-        }, 200);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (i < 10) {
+            this.playAnimation(this.IMAGES_ALERT);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+        i++;
+        if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
+            i = 0;
+            this.hadFirstContact = true;
+        }
+        this.isChasing = this.hadFirstContact && i >= 10 && !this.isHurt() && !this.isDead();
+    }, 200);
+
+    setInterval(() => {
+        if (this.isChasing) {
+            this.chaseCharacter();
+        }
+    }, 1000 / 60);
+}
+
+chaseCharacter() {
+    if (world.character.x < this.x) {
+        this.moveLeft();
+        this.otherDirection = false;
+    } else {
+        this.moveRight();
+        this.otherDirection = true;
     }
+}
 }

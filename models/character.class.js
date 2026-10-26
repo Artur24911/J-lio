@@ -1,6 +1,7 @@
 class Character extends MovableObject {
     height = 350;
     speed = 10;
+    cameraOffset = 100;
 
     IMAGES_WALKING = [
         '../img/2_character_pepe/2_walk/W-21.png',
@@ -105,13 +106,23 @@ class Character extends MovableObject {
                 this.jump();
             }
 
-            this.world.camera_x = -this.x + 100;
+            let targetOffset;
+            if (this.otherDirection) {
+                targetOffset = 520;
+            } else {
+                targetOffset = 100;
+            }
+            this.cameraOffset += (targetOffset - this.cameraOffset) * 0.1;
+            this.world.camera_x = -this.x + this.cameraOffset;
+            if (this.world.camera_x > 720) {
+                this.world.camera_x = 720;
+            }
         }, 1000 / 60);
 
         setInterval(() => {
-            if (this.isDead()){
+            if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
-            }else if (this.isHurt()) {
+            } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT)
             }
             else if (this.isAboveGround()) {
