@@ -6,7 +6,6 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new StatusBar();
     throwableObjects = [];
     statusBar = new StatusBar('health', 0);
     statusBarBottle = new StatusBar('bottle', 40);
@@ -49,7 +48,7 @@ class World {
 
     checkThrowObjects() {
         let now = new Date().getTime();
-        if (this.keyboard.C && this.collectedBottles > 0 && now - this.lastThrow > 1000) {
+        if (this.keyboard.C && !this.character.isDead() && this.collectedBottles > 0 && now - this.lastThrow > 1000) {
             let x = this.character.x + 50;
             if (this.character.otherDirection) {
                 x = this.character.x;
@@ -88,19 +87,30 @@ class World {
     }
 
     checkCollisions() {
-        let isFalling = (this.character.isAboveGround() || this.wasAboveGround) && this.character.speedY < 0;
-        this.level.enemies.forEach((enemy) => {
-            if (!enemy.isDead() && this.character.isColliding(enemy)) {
-                if (isFalling) {
-                    this.hitEnemy(enemy, enemy.energy);
-                } else if (!this.character.isHurt()) {
-                    this.character.hit();
-                    this.statusBar.setPercentage(this.character.energy);
-                }
+    this.level.enemies.forEach((enemy) => {
+        if (!enemy.isDead() && this.character.isColliding(enemy)) {
+            if (this.isStomp(enemy)) {
+                this.hitEnemy(enemy, enemy.energy);
+            } else if (!this.character.isHurt()) {
+                this.hurtCharacter();
             }
-        });
-        this.wasAboveGround = this.character.isAboveGround();
-    }
+        }
+    });
+    this.wasAboveGround = this.character.isAboveGround();
+}
+
+isStomp(enemy) {
+    let isFalling = (this.character.isAboveGround() || this.wasAboveGround) && this.character.speedY < 0;
+    let center = this.character.x + this.character.width / 2;
+    let enemyLeft = enemy.x + enemy.offset.left;
+    let enemyRight = enemy.x + enemy.width - enemy.offset.right;
+    return isFalling && center > enemyLeft && center < enemyRight;
+}
+
+hurtCharacter() {
+    this.character.hit();
+    this.statusBar.setPercentage(this.character.energy);
+}
 
     checkCollectCoins() {
     this.level.coins.forEach((coin, index) => {
@@ -201,17 +211,6 @@ class World {
                 this.endGame(this.IMAGE_YOU_WIN);
             }
         });
-    }
-
-    endGame(path) {
-        if (this.gameEnded) {
-            return;
-        }
-        this.gameEnded = true;
-        setTimeout(() => {
-            this.endScreen = new Image();
-            this.endScreen.src = path;
-        }, 1000);
     }
 
     endGame(path) {

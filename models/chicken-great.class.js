@@ -24,7 +24,7 @@ IMAGES_DEAD = [
 
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
-        this.x = 200 + Math.random() * 500;
+        this.x = 800 + Math.random() * 1200;
         this.speed = 2.5 + Math.random() * 0.55
         this.loadImages(this.IMAGES_DEAD);
         this.animate();
@@ -45,7 +45,7 @@ IMAGES_DEAD = [
         } else {
             this.playAnimation(this.IMAGES_WALKING);
         }
-        }, 1000/ 30);
+        }, 1000/ 8);
     }
 
 

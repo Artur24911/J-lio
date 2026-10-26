@@ -4,8 +4,7 @@ let keyboard = new Keyboard();
 
 function init(){
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
-    console.log('My Charakter is', world.character);    
+    world = new World(canvas, keyboard);  
 }
 
 function stopGame() {

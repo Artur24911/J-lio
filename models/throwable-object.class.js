@@ -18,12 +18,6 @@ class ThrowableObject extends MovableObject {
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
     ];
 
-    IMAGES_BOTTLEGROUND = [   //flaschen die im Boden stehen um munition zu sammeln
-        'img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
-        'img/6_salsa_bottle/2_salsa_bottle_on_ground.png'
-    ];
-
-
     constructor(x, y, otherDirection) {
         super().loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png')
         this.loadImages(this.IMAGES_BOTTLEROTATION);
