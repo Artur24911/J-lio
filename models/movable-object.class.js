@@ -18,7 +18,7 @@ class MovableObject extends DrawableObject{
     }
 
     applyGravity() {
-        setInterval(() => {
+        this.gravityInterval = setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
@@ -75,14 +75,14 @@ class MovableObject extends DrawableObject{
         this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
 }
     
-    hit(){
-        this.energy -=5;
-        if(this.energy < 0){
-            this.energy = 0;
-        }else{
-            this.lastHit = new Date().getTime();
-        }
+  hit(damage = 5) {
+    this.energy -= damage;
+    if (this.energy < 0) {
+        this.energy = 0;
+    } else {
+        this.lastHit = new Date().getTime();
     }
+}
 
     isHurt(){
         let timepassed = new Date ().getTime() - this.lastHit;
