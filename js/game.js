@@ -8,6 +8,16 @@ function init(){
     console.log('My Charakter is', world.character);    
 }
 
+function stopGame() {
+    for (let i = 1; i < 99999; i++) {
+        clearInterval(i);
+    }
+}
+
+function restartGame() {
+    location.reload();
+}
+
 window.addEventListener('keydown', (event) => {
     let key = event.key;
     if(key == "ArrowRight"){

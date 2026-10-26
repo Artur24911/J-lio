@@ -2,6 +2,8 @@ class Character extends MovableObject {
     height = 350;
     speed = 10;
     cameraOffset = 100;
+    jumpSpeed = 35;
+    deathStarted = false;
 
     IMAGES_WALKING = [
         '../img/2_character_pepe/2_walk/W-21.png',
@@ -104,6 +106,7 @@ class Character extends MovableObject {
             }
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
+                this.jumpSpeed = this.speedY;
             }
 
             let targetOffset;
@@ -120,19 +123,32 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT)
-            }
-            else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING)
-            } else {
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                }
-            }
-        }, 50);
+    if (this.isDead()) {
+        if (!this.deathStarted) {
+            this.deathStarted = true;
+            this.currentImage = 0;
+        }
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.playAnimation(this.IMAGES_DEAD);
+        }
+    } else if (this.isHurt()) {
+        this.playAnimation(this.IMAGES_HURT);
+    } else if (this.isAboveGround()) {
+        let progress = (this.jumpSpeed - this.speedY) / (2 * this.jumpSpeed + this.acceleration);
+        let index = Math.floor(progress * this.IMAGES_JUMPING.length);
+        if (index > this.IMAGES_JUMPING.length - 1) {
+            index = this.IMAGES_JUMPING.length - 1;
+        }
+        if (index < 0) {
+            index = 0;
+        }
+        this.img = this.imageCache[this.IMAGES_JUMPING[index]];
+    } else {
+        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+}, 50);
     }
 
 

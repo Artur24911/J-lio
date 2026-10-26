@@ -23,6 +23,10 @@ canvas{
     display: block;
 }
 
+.d-none {
+    display: none;
+}
+
 @media only screen and (max-width: 720px){
     canvas {
         width: 100%;

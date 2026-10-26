@@ -199,5 +199,16 @@ class World {
         }, 1000);
     }
 
-
+    endGame(path) {
+        if (this.gameEnded) {
+            return;
+        }
+        this.gameEnded = true;
+        setTimeout(() => {
+            this.endScreen = new Image();
+            this.endScreen.src = path;
+            document.getElementById('restartButton').classList.remove('d-none');
+            stopGame();
+        }, 1000);
+    }
 }
