@@ -17,6 +17,8 @@ class World {
     endScreen;
     IMAGE_GAME_OVER = 'img/You won, you lost/Game Over.png';
     IMAGE_YOU_WIN = 'img/You won, you lost/You won A.png';
+    statusBarCoin = new StatusBar('coin', 80);
+    collectedCoins = 0;
 
 
 
@@ -41,6 +43,7 @@ class World {
             this.checkCollectBottles();
             this.removeSplashedBottles();
             this.checkGameEnd();
+            this.checkCollectCoins();
         }, 1000 / 30);
     }
 
@@ -99,6 +102,16 @@ class World {
         this.wasAboveGround = this.character.isAboveGround();
     }
 
+    checkCollectCoins() {
+    this.level.coins.forEach((coin, index) => {
+        if (this.character.isColliding(coin)) {
+            this.level.coins.splice(index, 1);
+            this.collectedCoins++;
+            this.statusBarCoin.setPercentage(this.collectedCoins * 10);
+        }
+    });
+}
+
     // checkCollisionsBottle(){
     //      this.level.enemies.forEach((enemy) => {
     //         if(this.bottle.isColliding(enemy)){
@@ -115,10 +128,12 @@ class World {
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
+        this.addToMap(this.statusBarCoin);  
         this.ctx.translate(this.camera_x, 0);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.cloude);
         this.addObjectsToMap(this.level.bottles);
+        this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.throwableObjects);
         this.ctx.translate(-this.camera_x, 0);

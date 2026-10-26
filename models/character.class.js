@@ -4,6 +4,7 @@ class Character extends MovableObject {
     cameraOffset = 100;
     jumpSpeed = 35;
     deathStarted = false;
+    lastHurtAnimation = 0;
 
     IMAGES_WALKING = [
         '../img/2_character_pepe/2_walk/W-21.png',
@@ -132,7 +133,8 @@ class Character extends MovableObject {
             this.playAnimation(this.IMAGES_DEAD);
         }
     } else if (this.isHurt()) {
-        this.playAnimation(this.IMAGES_HURT);
+    this.playAnimation(this.IMAGES_HURT);
+        
     } else if (this.isAboveGround()) {
         let progress = (this.jumpSpeed - this.speedY) / (2 * this.jumpSpeed + this.acceleration);
         let index = Math.floor(progress * this.IMAGES_JUMPING.length);
@@ -143,10 +145,10 @@ class Character extends MovableObject {
             index = 0;
         }
         this.img = this.imageCache[this.IMAGES_JUMPING[index]];
+    } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        this.playAnimation(this.IMAGES_WALKING);
     } else {
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-        }
+        this.img = this.imageCache[this.IMAGES_WALKING[0]];
     }
 }, 50);
     }

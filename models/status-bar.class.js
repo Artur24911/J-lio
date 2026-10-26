@@ -41,9 +41,11 @@ class StatusBar extends DrawableObject {
     percentage = 100;
 
     constructor(type, y) {
-        super();
+    super();
     if (type == 'bottle') {
         this.images = this.STATUS_BOTTLE;
+    } else if (type == 'coin') {
+        this.images = this.STATUS_COIN;
     } else {
         this.images = this.STATUS_HEALTH;
     }
@@ -52,24 +54,24 @@ class StatusBar extends DrawableObject {
     this.y = y;
     this.width = 200;
     this.height = 40;
-    if (type == 'bottle') {
-        this.setPercentage(0);
-    } else {
+    if (type == 'health') {
         this.setPercentage(100);
+    } else {
+        this.setPercentage(0);
     }
-    }
-
-   setPercentage(percentage) {
-    this.percentage = percentage;
-    let path = this.images[this.resolveImageIndex()];
-    this.img = this.imageCache[path];
 }
 
-resolveImageIndex() {
-    return Math.floor(this.percentage / 20);
-}
+    setPercentage(percentage) {
+        this.percentage = percentage;
+        let path = this.images[this.resolveImageIndex()];
+        this.img = this.imageCache[path];
+    }
 
-    
+    resolveImageIndex() {
+        return Math.floor(this.percentage / 20);
+    }
+
+
 
 
 }
