@@ -18,6 +18,7 @@ class World {
     IMAGE_YOU_WIN = 'img/You won, you lost/You won A.png';
     statusBarCoin = new StatusBar('coin', 80);
     collectedCoins = 0;
+    animationFrame;
 
 
 
@@ -87,40 +88,40 @@ class World {
     }
 
     checkCollisions() {
-    this.level.enemies.forEach((enemy) => {
-        if (!enemy.isDead() && this.character.isColliding(enemy)) {
-            if (this.isStomp(enemy)) {
-                this.hitEnemy(enemy, enemy.energy);
-            } else if (!this.character.isHurt()) {
-                this.hurtCharacter();
+        this.level.enemies.forEach((enemy) => {
+            if (!enemy.isDead() && this.character.isColliding(enemy)) {
+                if (this.isStomp(enemy)) {
+                    this.hitEnemy(enemy, enemy.energy);
+                } else if (!this.character.isHurt()) {
+                    this.hurtCharacter();
+                }
             }
-        }
-    });
-    this.wasAboveGround = this.character.isAboveGround();
-}
+        });
+        this.wasAboveGround = this.character.isAboveGround();
+    }
 
-isStomp(enemy) {
-    let isFalling = (this.character.isAboveGround() || this.wasAboveGround) && this.character.speedY < 0;
-    let center = this.character.x + this.character.width / 2;
-    let enemyLeft = enemy.x + enemy.offset.left;
-    let enemyRight = enemy.x + enemy.width - enemy.offset.right;
-    return isFalling && center > enemyLeft && center < enemyRight;
-}
+    isStomp(enemy) {
+        let isFalling = (this.character.isAboveGround() || this.wasAboveGround) && this.character.speedY < 0;
+        let center = this.character.x + this.character.width / 2;
+        let enemyLeft = enemy.x + enemy.offset.left;
+        let enemyRight = enemy.x + enemy.width - enemy.offset.right;
+        return isFalling && center > enemyLeft && center < enemyRight;
+    }
 
-hurtCharacter() {
-    this.character.hit();
-    this.statusBar.setPercentage(this.character.energy);
-}
+    hurtCharacter() {
+        this.character.hit();
+        this.statusBar.setPercentage(this.character.energy);
+    }
 
     checkCollectCoins() {
-    this.level.coins.forEach((coin, index) => {
-        if (this.character.isColliding(coin)) {
-            this.level.coins.splice(index, 1);
-            this.collectedCoins++;
-            this.statusBarCoin.setPercentage(this.collectedCoins * 10);
-        }
-    });
-}
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.level.coins.splice(index, 1);
+                this.collectedCoins++;
+                this.statusBarCoin.setPercentage(this.collectedCoins * 10);
+            }
+        });
+    }
 
     // checkCollisionsBottle(){
     //      this.level.enemies.forEach((enemy) => {
@@ -138,7 +139,7 @@ hurtCharacter() {
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
-        this.addToMap(this.statusBarCoin);  
+        this.addToMap(this.statusBarCoin);
         this.ctx.translate(this.camera_x, 0);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.cloude);
@@ -157,10 +158,15 @@ hurtCharacter() {
 
 
         let self = this;
-        requestAnimationFrame(function () {
+        this.animationFrame = requestAnimationFrame(function () {
             self.draw();
         });
     }
+
+    stop() {
+        cancelAnimationFrame(this.animationFrame);
+    }
+
     addObjectsToMap(objects) {
         objects.forEach(o => {
             this.addToMap(o);
@@ -221,7 +227,7 @@ hurtCharacter() {
         setTimeout(() => {
             this.endScreen = new Image();
             this.endScreen.src = path;
-            document.getElementById('restartButton').classList.remove('d-none');
+            showElement('endButtons');
             stopGame();
         }, 1000);
     }

@@ -2,9 +2,41 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
-function init(){
+function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);  
+    initLevel();
+    world = new World(canvas, keyboard);
+}
+
+function startGame() {
+    hideElement('startScreen');
+    showElement('canvas');
+    init();
+}
+
+function restartGame() {
+    stopCurrentGame();
+    init();
+}
+
+function goHome() {
+    stopCurrentGame();
+    hideElement('canvas');
+    showElement('startScreen');
+}
+
+function stopCurrentGame() {
+    world.stop();
+    stopGame();
+    hideElement('endButtons');
+}
+
+function showElement(id) {
+    document.getElementById(id).classList.remove('d-none');
+}
+
+function hideElement(id) {
+    document.getElementById(id).classList.add('d-none');
 }
 
 function stopGame() {
@@ -13,9 +45,6 @@ function stopGame() {
     }
 }
 
-function restartGame() {
-    location.reload();
-}
 
 window.addEventListener('keydown', (event) => {
     let key = event.key;

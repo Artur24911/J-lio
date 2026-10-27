@@ -21,20 +21,63 @@
     <script src="./models/world.class.js"></script>
     <script src="./models/level.class.js"></script>
     <script src="./models/endboss.class.js"></script>
-    
+
     <script src="./Levels/level1.js"></script>
     <script src="js/game.js"></script>
 
+
 </head>
 
-<body onload="init()">
+<body>
     <h1>Júlio</h1>
 
-    <canvas id="canvas" width="720" height="480">
-        
+    <div class="game-area">
+        <div id="startScreen" class="start-screen">
+            <div class="start-buttons">
+                <button class="game-button" onclick="showElement('helpDialog')">Anleitung</button>
+                <button class="game-button big" onclick="startGame()">Start</button>
+                <button class="game-button" onclick="showElement('impressumDialog')">Impressum</button>
+            </div>
 
-    </canvas>
-    <button id="restartButton" class="d-none" onclick="restartGame()">Neustart</button>
+            <div id="helpDialog" class="dialog-backdrop d-none" onclick="hideElement('helpDialog')">
+                <div class="dialog" onclick="event.stopPropagation()">
+                    <button class="close-button" onclick="hideElement('helpDialog')">X</button>
+                    <h2>So spielst du</h2>
+                    <table>
+                        <tr>
+                            <td>Pfeil links / rechts</td>
+                            <td>Laufen</td>
+                        </tr>
+                        <tr>
+                            <td>Leertaste</td>
+                            <td>Springen</td>
+                        </tr>
+                        <tr>
+                            <td>C</td>
+                            <td>Flasche werfen</td>
+                        </tr>
+                    </table>
+                    <p>Sammle Flaschen und Münzen. Besiege Hühner, indem du von oben auf sie springst oder Flaschen
+                        wirfst. Besiege den Endboss, um zu gewinnen.</p>
+                </div>
+            </div>
+            <div id="impressumDialog" class="dialog-backdrop d-none" onclick="hideElement('impressumDialog')">
+                <div class="dialog" onclick="event.stopPropagation()">
+                    <button class="close-button" onclick="hideElement('impressumDialog')">X</button>
+                    <h2>Impressum</h2>
+                    <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
+                    <p>E-Mail: beispiel@example.com</p>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="canvas" class="d-none" width="720" height="480"></canvas>
+
+        <div id="endButtons" class="end-buttons d-none">
+            <button class="game-button" onclick="restartGame()">Neustart</button>
+            <button class="game-button" onclick="goHome()">Schließen</button>
+        </div>
+    </div>
 </body>
 
 </html>

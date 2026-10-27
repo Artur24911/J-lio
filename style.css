@@ -23,6 +23,115 @@ canvas{
     display: block;
 }
 
+.game-area {
+    position: relative;
+    width: 720px;
+    max-width: 100%;
+}
+
+.start-screen {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 5%;
+    background-image: url('./img/9_intro_outro_screens/start/startscreen_julio.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.start-buttons,
+.end-buttons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.end-buttons {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 5%;
+    justify-content: center;
+}
+
+.game-button {
+    display: inline-block;
+    padding: 8px 26px;
+    font-family: inherit;
+    font-size: 26px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: #7a1f05;
+    background: linear-gradient(#ffe600, #ffa000);
+    border: 3px solid #b5360e;
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #8a2a08;
+    cursor: pointer;
+}
+
+.game-button.big {
+    font-size: 36px;
+    padding: 10px 44px;
+}
+
+.game-button:hover {
+    filter: brightness(1.1);
+}
+
+.game-button:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #8a2a08;
+}
+
+.dialog-backdrop {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.dialog {
+    position: relative;
+    max-width: 80%;
+    padding: 20px 28px;
+    background-color: #fff3d6;
+    border: 4px solid #b5360e;
+    border-radius: 16px;
+    color: #5a1f08;
+    text-align: center;
+}
+
+.dialog h2 {
+    margin-top: 0;
+}
+
+.dialog table {
+    margin: 0 auto 12px;
+    text-align: left;
+}
+
+.dialog td {
+    padding: 4px 14px;
+}
+
+.close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: inherit;
+    font-size: 18px;
+    color: #7a1f05;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 .d-none {
     display: none;
 }
@@ -34,6 +143,11 @@ canvas{
     h1{
         display: none;
     }
+
+    .game-button {
+    font-size: 18px;
+    padding: 6px 14px;
+}
 }
 
 @media only screen and (max-height: 480px){
@@ -43,5 +157,9 @@ canvas{
     h1{
         display: none;
     }
+
+    .start-screen {
+    height: 100vh;
+}
 
 }
