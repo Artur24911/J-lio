@@ -1,3 +1,14 @@
+let isPaused = false;
+let originalSetInterval = window.setInterval;
+
+window.setInterval = function (callback, delay) {
+    return originalSetInterval(() => {
+        if (!isPaused) {
+            callback();
+        }
+    }, delay);
+};
+
 let canvas;
 let world;
 let keyboard = new Keyboard();
@@ -50,6 +61,44 @@ function stopCurrentGame() {
     stopGame();
     stopAllSounds();
     hideElement('endButtons');
+    isPaused = false;
+}
+
+function openSettings() {
+    document.getElementById('settingsButton').blur();
+    updateMuteButton();
+    if (isStartScreenVisible()) {
+        hideElement('quitButton');
+    } else {
+        showElement('quitButton');
+        if (!world.gameEnded) {
+            pauseGame();
+        }
+    }
+    showElement('settingsDialog');
+}
+
+function closeSettings() {
+    hideElement('settingsDialog');
+    resumeGame();
+}
+
+function closeImpressum() {
+    hideElement('impressumDialog');
+    resumeGame();
+}
+
+function pauseGame() {
+    isPaused = true;
+    pauseSounds();
+}
+
+function resumeGame() {
+    if (!isPaused) {
+        return;
+    }
+    isPaused = false;
+    resumeSounds();
 }
 
 function showElement(id) {
@@ -110,17 +159,6 @@ window.addEventListener('keyup', (event) => {
         keyboard.C = false;
     }
 });
-
-function openSettings() {
-    document.getElementById('settingsButton').blur();
-    updateMuteButton();
-    if (isStartScreenVisible()) {
-        hideElement('quitButton');
-    } else {
-        showElement('quitButton');
-    }
-    showElement('settingsDialog');
-}
 
 function quitGame() {
     hideElement('settingsDialog');

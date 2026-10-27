@@ -185,9 +185,24 @@ function toggleMute() {
     document.getElementById('muteButton').blur();
     if (isMuted) {
         stopAllSounds();
-    } else {
+    } else if (!isPaused) {
         playBackgroundMusic();
     }
+}
+
+
+function pauseSounds() {
+    Object.values(sounds).forEach((sound) => sound.pause());
+    switchSounds.forEach((sound) => sound.pause());
+    endbossSounds.forEach((sound) => sound.pause());
+}
+
+
+function resumeSounds() {
+    if (isMuted || isStartScreenVisible() || world.gameEnded) {
+        return;
+    }
+    loopSound('music');
 }
 
 
