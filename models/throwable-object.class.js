@@ -50,10 +50,8 @@ class ThrowableObject extends MovableObject {
     animate() {
         this.rotationInterval = setInterval(() => {
             this.playAnimation(this.IMAGES_BOTTLEROTATION);
+            playSwitchSound();
         }, 1000 / 20);
-
-
-
     }
 
     splash() {
@@ -61,6 +59,7 @@ class ThrowableObject extends MovableObject {
             return;
         }
         this.hasSplashed = true;
+        playSound('splash');
         clearInterval(this.moveInterval);
         clearInterval(this.rotationInterval);
         clearInterval(this.gravityInterval);

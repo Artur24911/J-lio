@@ -1,4 +1,5 @@
 class Chicken extends MovableObject{
+    hasEnteredScreen = false;
     energy = 1;
     height = 60;
     width =  40; 
@@ -10,7 +11,8 @@ class Chicken extends MovableObject{
     ];
 
     IMAGES_DEAD = [
-        'img/3_enemies_chicken/chicken_small/2_dead/dead.png'
+        'img/3_enemies_chicken/chicken_small/2_dead/dead.png',
+        'img/grabkreuz_chicken_spiel.png'
     ];
 
     offset = {

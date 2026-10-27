@@ -1,4 +1,5 @@
 class ChickenGreat extends MovableObject{
+    hasEnteredScreen = false;
     height = 90;
     width = 70;
     y = 340;
@@ -17,7 +18,8 @@ IMAGES_WALKING = [
 ];
 
 IMAGES_DEAD = [
-    'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
+    'img/3_enemies_chicken/chicken_normal/2_dead/dead.png',
+    'img/grabkreuz_chicken_spiel.png'
 ];
 
    constructor(){

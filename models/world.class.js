@@ -44,6 +44,7 @@ class World {
             this.removeSplashedBottles();
             this.checkGameEnd();
             this.checkCollectCoins();
+            this.checkChickensEnterScreen();
         }, 1000 / 30);
     }
 
@@ -56,6 +57,7 @@ class World {
             }
             let bottle = new ThrowableObject(x, this.character.y + 150, this.character.otherDirection);
             this.throwableObjects.push(bottle);
+            playSound('throwBottle');
             this.collectedBottles--;
             this.statusBarBottle.setPercentage(this.collectedBottles * 10);
             this.lastThrow = now;
@@ -110,6 +112,7 @@ class World {
 
     hurtCharacter() {
         this.character.hit();
+        playSound('hitCharacter');
         this.statusBar.setPercentage(this.character.energy);
     }
 
@@ -119,6 +122,7 @@ class World {
                 this.level.coins.splice(index, 1);
                 this.collectedCoins++;
                 this.statusBarCoin.setPercentage(this.collectedCoins * 10);
+                playSound('coin');
             }
         });
     }
@@ -201,34 +205,51 @@ class World {
 
     hitEnemy(enemy, damage) {
         enemy.hit(damage);
-        if (enemy.isDead() && !(enemy instanceof Endboss)) {
-            setTimeout(() => {
-                this.level.enemies = this.level.enemies.filter((e) => e != enemy);
-            }, 1000);
+        if (enemy.isDead() && enemy instanceof Endboss) {
+            playSound('endbossDead');
+        } else if (enemy.isDead()) {
+            playSound('chickenDead');
         }
     }
 
     checkGameEnd() {
         if (this.character.isDead()) {
-            this.endGame(this.IMAGE_GAME_OVER);
+            this.endGame(this.IMAGE_GAME_OVER, 'gameOver');
         }
         this.level.enemies.forEach((enemy) => {
             if (enemy instanceof Endboss && enemy.isDead()) {
-                this.endGame(this.IMAGE_YOU_WIN);
+                this.endGame(this.IMAGE_YOU_WIN, 'won');
             }
         });
     }
 
-    endGame(path) {
+    endGame(path, soundName) {
         if (this.gameEnded) {
             return;
         }
         this.gameEnded = true;
+        stopSound('music');
         setTimeout(() => {
             this.endScreen = new Image();
             this.endScreen.src = path;
+            playSound(soundName);
             showElement('endButtons');
             stopGame();
         }, 1000);
+    }
+
+    checkChickensEnterScreen() {
+        this.level.enemies.forEach((enemy) => {
+            if (!(enemy instanceof Endboss) && !enemy.isDead() && !enemy.hasEnteredScreen && this.isOnScreen(enemy)) {
+                enemy.hasEnteredScreen = true;
+                playSound('chickenAppear');
+            }
+        });
+    }
+
+    isOnScreen(object) {
+        let left = -this.camera_x;
+        let right = -this.camera_x + this.canvas.width;
+        return object.x < right && object.x + object.width > left;
     }
 }

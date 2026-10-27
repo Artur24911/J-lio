@@ -70,46 +70,54 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
-   animate() {
-    let i = 0;
-    setInterval(() => {
-        if (this.isDead()) {
-            if (!this.deathStarted) {
-                this.deathStarted = true;
-                this.currentImage = 0;
+    animate() {
+        let i = 0;
+        setInterval(() => {
+            if (this.isDead()) {
+                if (!this.deathStarted) {
+                    this.deathStarted = true;
+                    this.currentImage = 0;
+                }
+                if (this.currentImage < this.IMAGES_DEAD.length) {
+                    this.playAnimation(this.IMAGES_DEAD);
+                }
+            } else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+            } else if (i < 10) {
+                this.playAnimation(this.IMAGES_ALERT);
+            } else {
+                this.playAnimation(this.IMAGES_WALKING);
             }
-            if (this.currentImage < this.IMAGES_DEAD.length) {
-                this.playAnimation(this.IMAGES_DEAD);
+            i++;
+            if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
+                i = 0;
+                this.hadFirstContact = true;
             }
-        } else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
-        } else if (i < 10) {
-            this.playAnimation(this.IMAGES_ALERT);
+            this.isChasing = this.hadFirstContact && i >= 10 && !this.isHurt() && !this.isDead();
+        }, 200);
+
+        setInterval(() => {
+            if (this.isChasing) {
+                this.chaseCharacter();
+            }
+        }, 1000 / 60);
+    }
+
+    chaseCharacter() {
+        if (world.character.x < this.x) {
+            this.moveLeft();
+            this.otherDirection = false;
         } else {
-            this.playAnimation(this.IMAGES_WALKING);
+            this.moveRight();
+            this.otherDirection = true;
         }
-        i++;
-        if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
-            i = 0;
-            this.hadFirstContact = true;
-        }
-        this.isChasing = this.hadFirstContact && i >= 10 && !this.isHurt() && !this.isDead();
-    }, 200);
+    }
 
-    setInterval(() => {
-        if (this.isChasing) {
-            this.chaseCharacter();
-        }
-    }, 1000 / 60);
-}
-
-chaseCharacter() {
-    if (world.character.x < this.x) {
-        this.moveLeft();
-        this.otherDirection = false;
+    updateSound() {
+    if (this.isChasing) {
+        loopEndbossSounds();
     } else {
-        this.moveRight();
-        this.otherDirection = true;
+        stopEndbossSounds();
     }
 }
 }

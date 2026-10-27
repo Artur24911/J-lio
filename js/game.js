@@ -1,16 +1,35 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let menuOpened = false;
+
+
+function openMenu() {
+    if (menuOpened) {
+        return;
+    }
+    menuOpened = true;
+    hideElement('pressKey');
+    showElement('startButtons');
+    showElement('muteButton');
+    updateMuteButton();
+    playBackgroundMusic();
+}
+
+window.addEventListener('keydown', openMenu);
+window.addEventListener('click', openMenu);
 
 function init() {
     canvas = document.getElementById('canvas');
     initLevel();
     world = new World(canvas, keyboard);
+    playBackgroundMusic();
 }
 
 function startGame() {
     hideElement('startScreen');
     showElement('canvas');
+    stopSound('menu');
     init();
 }
 
@@ -23,11 +42,13 @@ function goHome() {
     stopCurrentGame();
     hideElement('canvas');
     showElement('startScreen');
+    playBackgroundMusic();
 }
 
 function stopCurrentGame() {
     world.stop();
     stopGame();
+    stopAllSounds();
     hideElement('endButtons');
 }
 

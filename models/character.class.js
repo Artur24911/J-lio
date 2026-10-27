@@ -73,8 +73,8 @@ class Character extends MovableObject {
 
     offset = {
         top: 160,
-        left: 30,
-        right: 30,
+        left: 20,
+        right: 25,
         bottom: 30
     };
 
@@ -111,6 +111,7 @@ class Character extends MovableObject {
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
                 this.jumpSpeed = this.speedY;
+                 playSound('jump');
             }
 
             let targetOffset;

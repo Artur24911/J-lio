@@ -132,6 +132,29 @@ canvas{
     cursor: pointer;
 }
 
+.press-key {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: #ffe600;
+    text-shadow: 2px 2px 0 #8a2a08;
+    animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0.2;
+    }
+}
+
+.mute-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 12px;
+    font-size: 16px;
+}
+
 .d-none {
     display: none;
 }
