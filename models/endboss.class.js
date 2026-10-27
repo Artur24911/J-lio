@@ -7,6 +7,7 @@ class Endboss extends MovableObject {
     isChasing = false;
     deathStarted = false;
 
+
     offset = {
         top: 100,
         left: 40,
@@ -85,20 +86,25 @@ class Endboss extends MovableObject {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (i < 10) {
                 this.playAnimation(this.IMAGES_ALERT);
+              
             } else {
                 this.playAnimation(this.IMAGES_WALKING);
+                
             }
             i++;
             if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
                 i = 0;
                 this.hadFirstContact = true;
+
             }
             this.isChasing = this.hadFirstContact && i >= 10 && !this.isHurt() && !this.isDead();
+              this.updateSound();
         }, 200);
 
         setInterval(() => {
             if (this.isChasing) {
                 this.chaseCharacter();
+
             }
         }, 1000 / 60);
     }
@@ -114,10 +120,12 @@ class Endboss extends MovableObject {
     }
 
     updateSound() {
-    if (this.isChasing) {
-        loopEndbossSounds();
-    } else {
-        stopEndbossSounds();
+        if (this.hadFirstContact) {
+            loopEndbossSounds();
+            setMusicSpeed(1.3);
+        } else {
+            stopEndbossSounds();
+            setMusicSpeed(1);
+        }
     }
-}
 }

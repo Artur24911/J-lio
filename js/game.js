@@ -11,7 +11,7 @@ function openMenu() {
     menuOpened = true;
     hideElement('pressKey');
     showElement('startButtons');
-    showElement('muteButton');
+    showElement('settingsButton');
     updateMuteButton();
     playBackgroundMusic();
 }
@@ -110,3 +110,24 @@ window.addEventListener('keyup', (event) => {
         keyboard.C = false;
     }
 });
+
+function openSettings() {
+    document.getElementById('settingsButton').blur();
+    updateMuteButton();
+    if (isStartScreenVisible()) {
+        hideElement('quitButton');
+    } else {
+        showElement('quitButton');
+    }
+    showElement('settingsDialog');
+}
+
+function quitGame() {
+    hideElement('settingsDialog');
+    goHome();
+}
+
+function openImpressum() {
+    hideElement('settingsDialog');
+    showElement('impressumDialog');
+}

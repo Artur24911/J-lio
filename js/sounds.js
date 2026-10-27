@@ -1,20 +1,21 @@
 let isMuted = localStorage.getItem('isMuted') == 'true';
 
 let sounds = {
-    music: new Audio('../audio/gameplay.ogg'),
-    jump: new Audio('../audio/Jump.ogg'),
-    coin: new Audio('../audio/coin.wav'),
-    splash: new Audio('../audio/splash.wav'),
-    throwBottle: new Audio('../audio/car_spinning.wav'),
-    chickenDead: new Audio('../audio/chicken_dead.wav'),
-    hitCharacter: new Audio('../audio/hit_character.mp3'),
-    endboss: new Audio('../audio/Chicken_Sound_Effect.mp3'),
-    endbossDead: new Audio('../audio/deathEndboss.ogg'),
-    gameOver: new Audio('../audio/gameover.mp3'),
-    won: new Audio('../audio/Won.wav'),
-    menu: new Audio('../audio/menusound.mp3'),
-    // endboss: new Audio('../audio/endboss.mp3'),
-    chickenAppear: new Audio('../audio/Chicken_Sound_Effect.mp3'),
+    music: new Audio('audio/gameplay.ogg'),
+    menu: new Audio('audio/menusound.mp3'),
+    jump: new Audio('audio/Jump.ogg'),
+    coin: new Audio('audio/coin.wav'),
+    splash: new Audio('audio/splash.wav'),
+    throwBottle: new Audio('audio/car_spinning.wav'),
+    chickenDead: new Audio('audio/chicken_dead.wav'),
+    chickenAppear: new Audio('audio/Chicken_Sound_Effect.mp3'),
+    hitCharacter: new Audio('audio/hit_character.mp3'),
+    endbossDead: new Audio('audio/deathEndboss.ogg'),
+    gameOver: new Audio('audio/gameover.mp3'),
+    won: new Audio('audio/Won.wav'),
+    pickupBottle: new Audio('audio/pickup.mp3'), 
+    yawn: new Audio('audio/Yawn.wav'),
+    sleep: new Audio('audio/Sleep.wav')
 };
 
 let switchSoundPaths = [
@@ -72,43 +73,40 @@ let endbossSoundPaths = [
     '../audio/drunk-dwarf-pack/36.ogg',
     '../audio/drunk-dwarf-pack/37.ogg',
     '../audio/drunk-dwarf-pack/38.ogg',
-    
-
 ];
 
 let switchSounds = loadSounds(switchSoundPaths, 0.5);
-let endbossSounds = loadSounds(endbossSoundPaths, 0.4);
+let endbossSounds = loadSounds(endbossSoundPaths, 0.8);
 let switchIndex = 0;
 let endbossIndex = 0;
 
-
-
-for (let i = 1; i <= 13; i++) {
-    switchSounds.push(new Audio('../audio/swiches/swich' + i + '.mp3'));
-}
-
-sounds.chickenAppear.volume = 0.4;
 sounds.music.loop = true;
 sounds.music.volume = 0.2;
 sounds.menu.loop = true;
 sounds.menu.volume = 0.2;
-sounds.endboss.volume = 0.4;
+sounds.chickenAppear.volume = 0.4;
+let endbossSoundStart = 0.3;
+let endbossNextPlay = 0;
+let musicStart = 2.5;
 
-function playSwitchSound() {
-    if (isMuted) {
-        return;
-    }
-    switchSounds[switchIndex].currentTime = 0;
-    switchSounds[switchIndex].play().catch(() => { });
-    switchIndex = (switchIndex + 1) % switchSounds.length;
+
+function loadSounds(paths, volume) {
+    let list = [];
+    paths.forEach((path) => {
+        let audio = new Audio(path);
+        audio.volume = volume;
+        list.push(audio);
+    });
+    return list;
 }
+
 
 function playSound(name) {
     if (isMuted) {
         return;
     }
     sounds[name].currentTime = 0;
-    sounds[name].play().catch(() => { });
+    sounds[name].play().catch(() => {});
 }
 
 
@@ -117,22 +115,66 @@ function loopSound(name) {
         return;
     }
     sounds[name].loop = true;
-    sounds[name].play().catch(() => { });
+    sounds[name].play().catch(() => {});
 }
 
 
 function stopSound(name) {
-    sounds[name].pause();
-    sounds[name].currentTime = 0;
+    stopAudio(sounds[name]);
+}
+
+
+function stopAudio(sound) {
+    sound.pause();
+    sound.currentTime = 0;
 }
 
 
 function stopAllSounds() {
-    Object.values(sounds).forEach((sound) => {
-        sound.pause();
-        sound.currentTime = 0;
-    });
-    switchSounds.forEach((sound) => sound.pause());
+    Object.values(sounds).forEach(stopAudio);
+    switchSounds.forEach(stopAudio);
+    endbossSounds.forEach(stopAudio);
+    sounds.music.playbackRate = 1;
+}
+
+
+function playSwitchSound() {
+    if (isMuted || switchSounds.length == 0) {
+        return;
+    }
+    switchSounds[switchIndex].currentTime = 0;
+    switchSounds[switchIndex].play().catch(() => {});
+    switchIndex = (switchIndex + 1) % switchSounds.length;
+}
+
+
+function loopEndbossSounds() {
+    let now = new Date().getTime();
+    if (isMuted || endbossSounds.length == 0 || now < endbossNextPlay) {
+        return;
+    }
+    let sound = endbossSounds[endbossIndex];
+    let playTime = getEndbossPlayTime(sound);
+    sound.currentTime = endbossSoundStart;
+    sound.play().catch(() => {});
+    setTimeout(() => stopAudio(sound), playTime * 1000);
+    endbossNextPlay = now + playTime * 1000;
+    endbossIndex = (endbossIndex + 1) % endbossSounds.length;
+}
+
+
+function getEndbossPlayTime(sound) {
+    let length = sound.duration - endbossSoundStart;
+    if (isNaN(length) || length > 3) {
+        return 3;
+    }
+    return Math.max(length, 0.3);
+}
+
+
+function stopEndbossSounds() {
+    endbossSounds.forEach(stopAudio);
+    endbossNextPlay = 0;
 }
 
 
@@ -156,77 +198,39 @@ function updateMuteButton() {
     } else {
         button.textContent = 'Ton an';
     }
-
-    function playBackgroundMusic() {
-        if (isStartScreenVisible()) {
-            loopSound('menu');
-        } else if (!world.gameEnded) {
-            loopSound('music');
-        }
-    }
-
-
-    function isStartScreenVisible() {
-        return !document.getElementById('startScreen').classList.contains('d-none');
-    }
-
-
-function loadSounds(paths, volume) {
-    let list = [];
-    paths.forEach((path) => {
-        let audio = new Audio(path);
-        audio.volume = volume;
-        list.push(audio);
-    });
-    return list;
 }
 
 
-function playSwitchSound() {
-    if (isMuted || switchSounds.length == 0) {
-        return;
+function playBackgroundMusic() {
+    if (isStartScreenVisible()) {
+        loopSound('menu');
+    } else if (!world.gameEnded) {
+        startGameMusic();
     }
-    switchSounds[switchIndex].currentTime = 0;
-    switchSounds[switchIndex].play().catch(() => {});
-    switchIndex = (switchIndex + 1) % switchSounds.length;
 }
 
 
-function loopEndbossSounds() {
-    if (isMuted || endbossSounds.length == 0 || isAnyPlaying(endbossSounds)) {
-        return;
+function startGameMusic() {
+    if (sounds.music.paused) {
+        sounds.music.currentTime = musicStart;
     }
-    endbossSounds[endbossIndex].currentTime = 0;
-    endbossSounds[endbossIndex].play().catch(() => {});
-    endbossIndex = (endbossIndex + 1) % endbossSounds.length;
+    loopSound('music');
 }
 
+function isStartScreenVisible() {
+    return !document.getElementById('startScreen').classList.contains('d-none');
+}
+
+function setMusicSpeed(speed) {
+    sounds.music.playbackRate = speed;
+}
 
 function isAnyPlaying(list) {
     let playing = false;
     list.forEach((sound) => {
-        if (!sound.paused) {
+        if (!sound.paused && !sound.ended && !sound.error) {
             playing = true;
         }
     });
     return playing;
-}
-
-
-function stopEndbossSounds() {
-    endbossSounds.forEach(stopAudio);
-}
-
-
-function stopAudio(sound) {
-    sound.pause();
-    sound.currentTime = 0;
-}
-
-
-function stopAllSounds() {
-    Object.values(sounds).forEach(stopAudio);
-    switchSounds.forEach(stopAudio);
-    endbossSounds.forEach(stopAudio);
-}
 }

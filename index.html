@@ -74,11 +74,31 @@
         </div>
 
         <canvas id="canvas" class="d-none" width="720" height="480"></canvas>
-        <button id="muteButton" class="game-button mute-button d-none" onclick="toggleMute()">Ton an</button>
+        <button id="settingsButton" class="game-button settings-button d-none" onclick="openSettings()">Einstellungen</button>
         <div id="endButtons" class="end-buttons d-none">
             <button class="game-button" onclick="restartGame()">Neustart</button>
             <button class="game-button" onclick="goHome()">Schließen</button>
         </div>
+        <div id="settingsDialog" class="dialog-backdrop d-none" onclick="hideElement('settingsDialog')">
+    <div class="dialog" onclick="event.stopPropagation()">
+        <button class="close-button" onclick="hideElement('settingsDialog')">X</button>
+        <h2>Einstellungen</h2>
+        <div class="dialog-buttons">
+            <button id="muteButton" class="game-button" onclick="toggleMute()">Ton an</button>
+            <button id="quitButton" class="game-button" onclick="quitGame()">Spiel abbrechen</button>
+            <button class="game-button" onclick="openImpressum()">Impressum</button>
+        </div>
+    </div>
+</div>
+
+<div id="impressumDialog" class="dialog-backdrop d-none" onclick="hideElement('impressumDialog')">
+    <div class="dialog" onclick="event.stopPropagation()">
+        <button class="close-button" onclick="hideElement('impressumDialog')">X</button>
+        <h2>Impressum</h2>
+        <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
+        <p>E-Mail: beispiel@example.com</p>
+    </div>
+</div>
     </div>
 </body>
 

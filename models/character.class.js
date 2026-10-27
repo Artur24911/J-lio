@@ -5,6 +5,7 @@ class Character extends MovableObject {
     jumpSpeed = 35;
     deathStarted = false;
     lastAction = new Date().getTime();
+    wasSleeping = false;
 
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
@@ -97,7 +98,7 @@ class Character extends MovableObject {
             if (this.isDead()) {
                 return;
             } this.updateLastAction();
-             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.moveRight();
                 this.otherDirection = false;
                 //  this.WALKING_SOUND.play();
@@ -111,7 +112,7 @@ class Character extends MovableObject {
             if (this.world.keyboard.SPACE && !this.isAboveGround()) {
                 this.jump();
                 this.jumpSpeed = this.speedY;
-                 playSound('jump');
+                playSound('jump');
             }
 
             let targetOffset;
@@ -157,6 +158,7 @@ class Character extends MovableObject {
         }, 50);
 
         setInterval(() => {
+            this.updateSleepSound();
             if (this.isIdle()) {
                 if (this.isSleeping()) {
                     this.playAnimation(this.IMAGES_IDLELONG);
@@ -166,6 +168,21 @@ class Character extends MovableObject {
             }
         }, 200);
     }
+
+    updateSleepSound() {
+    let sleeping = this.isIdle() && this.isSleeping();
+    if (sleeping && !this.wasSleeping) {
+        playSound('yawn');
+    }
+    if (sleeping && (sounds.yawn.paused || sounds.yawn.ended)) {
+        loopSound('sleep');
+    }
+    if (!sleeping) {
+        stopSound('yawn');
+        stopSound('sleep');
+    }
+    this.wasSleeping = sleeping;
+}
 
     updateLastAction() {
         let keyboard = this.world.keyboard;

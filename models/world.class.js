@@ -81,6 +81,7 @@ class World {
                 this.level.bottles.splice(index, 1);
                 this.collectedBottles++;
                 this.statusBarBottle.setPercentage(this.collectedBottles * 10);
+                playSound('pickupBottle');
             }
         });
     }
@@ -207,6 +208,8 @@ class World {
         enemy.hit(damage);
         if (enemy.isDead() && enemy instanceof Endboss) {
             playSound('endbossDead');
+            stopEndbossSounds();
+            setMusicSpeed(1);
         } else if (enemy.isDead()) {
             playSound('chickenDead');
         }
@@ -235,6 +238,7 @@ class World {
             playSound(soundName);
             showElement('endButtons');
             stopGame();
+            stopEndbossSounds();
         }, 1000);
     }
 
