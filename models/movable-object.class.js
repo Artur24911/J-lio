@@ -1,5 +1,5 @@
-class MovableObject extends DrawableObject{
-    
+class MovableObject extends DrawableObject {
+
     speed = 0.2;
     otherDirection = false;
     speedY = 0;
@@ -13,7 +13,7 @@ class MovableObject extends DrawableObject{
     energy = 100;
     lastHit = 0;
 
-    constructor(){
+    constructor() {
         super();
     }
 
@@ -27,10 +27,10 @@ class MovableObject extends DrawableObject{
     }
 
     isAboveGround() {
-        if(this instanceof ThrowableObject){
+        if (this instanceof ThrowableObject) {
             return true;
         } else {
-        return this.y < 80;
+            return this.y < 80;
         }
     }
 
@@ -51,7 +51,7 @@ class MovableObject extends DrawableObject{
     }
 
     jump() {
-        this.speedY = 35;  
+        this.speedY = 35;
     }
 
     //  isColliding(mo) {
@@ -68,29 +68,29 @@ class MovableObject extends DrawableObject{
     //         this.y + this.offset.top < mo.y - this.offset.top + mo.height - this.offset.left;
     // }
 
-   isColliding(mo) {
-    return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
-        this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
-        this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
-        this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
-}
-    
-  hit(damage = 5) {
-    this.energy -= damage;
-    if (this.energy < 0) {
-        this.energy = 0;
-    } else {
-        this.lastHit = new Date().getTime();
+    isColliding(mo) {
+        return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
+            this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
+            this.x + this.offset.left < mo.x + mo.width - mo.offset.right &&
+            this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
-}
 
-    isHurt(){
-        let timepassed = new Date ().getTime() - this.lastHit;
+    hit(damage = 5) {
+        this.energy -= damage;
+        if (this.energy < 0) {
+            this.energy = 0;
+        } else {
+            this.lastHit = new Date().getTime();
+        }
+    }
+
+    isHurt() {
+        let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
         return timepassed < 0.5;
     }
-    
-    isDead(){
+
+    isDead() {
         return this.energy == 0;
     }
 }
