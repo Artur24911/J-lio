@@ -256,3 +256,10 @@ function playBackgroundMusic() {
 function isStartScreenVisible() {
     return !document.getElementById('startScreen').classList.contains('d-none');
 }
+
+function playSoundIfFree(name) {
+    if (isSoundPlaying(name)) {
+        return;
+    }
+    playSound(name);
+}

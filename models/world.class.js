@@ -248,7 +248,7 @@ class World {
         this.level.enemies.forEach((enemy) => {
             if (!(enemy instanceof Endboss) && !enemy.isDead() && !enemy.hasEnteredScreen && this.isOnScreen(enemy)) {
                 enemy.hasEnteredScreen = true;
-                playSound('chickenAppear');
+                playSoundIfFree('chickenAppear');
             }
         });
     }
