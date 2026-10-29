@@ -1,198 +1,223 @@
 let isMuted = localStorage.getItem('isMuted') == 'true';
-// let isMuted = true;
+let audioContext = null;
+let soundBuffers = {};
+let switchBuffers = [];
+let endbossBuffers = [];
+let activeSources = [];
+let pendingSounds = 0;
+let switchIndex = 0;
+let endbossIndex = 0;
+let endbossNextPlay = 0;
+let endbossSoundStart = 0.3;
+let musicStart = 2.5;
+let musicSpeed = 1;
 
-function unlockSounds() {
-    let all = Object.values(sounds).concat(switchSounds, endbossSounds);
-    all.forEach((sound) => {
-        sound.muted = true;
-        sound.play().then(() => {
-            stopAudio(sound);
-            sound.muted = false;
-        }).catch(() => {
-            sound.muted = false;
-        });
-    });
+let soundFiles = {
+    music: { path: 'audio/gameplay.ogg', volume: 0.2 },
+    menu: { path: 'audio/menusound.mp3', volume: 0.2 },
+    jump: { path: 'audio/Jump.ogg', volume: 1 },
+    coin: { path: 'audio/coin.wav', volume: 1 },
+    splash: { path: 'audio/splash.wav', volume: 1 },
+    throwBottle: { path: 'audio/car_spinning.wav', volume: 1 },
+    chickenDead: { path: 'audio/chicken_dead.wav', volume: 1 },
+    chickenAppear: { path: 'audio/Chicken_Sound_Effect.mp3', volume: 0.4 },
+    hitCharacter: { path: 'audio/hit_character.mp3', volume: 1 },
+    endbossDead: { path: 'audio/deathEndboss.ogg', volume: 1 },
+    gameOver: { path: 'audio/gameover.mp3', volume: 1 },
+    won: { path: 'audio/Won.wav', volume: 1 },
+    pickupBottle: { path: 'audio/pickup.mp3', volume: 1 },
+    yawn: { path: 'audio/Yawn.wav', volume: 1 },
+    sleep: { path: 'audio/Sleep.wav', volume: 1 }
+};
+
+let switchSoundPaths = [];
+for (let i = 1; i <= 13; i++) {
+    switchSoundPaths.push('audio/swishes/swish' + i + '.wav');
+}
+
+let endbossSoundPaths = [];
+for (let i = 1; i <= 38; i++) {
+    endbossSoundPaths.push('audio/drunk-dwarf-pack/' + i + '.ogg');
 }
 
 
-
-let sounds = {
-    music: new Audio('audio/gameplay.ogg'),
-    menu: new Audio('audio/menusound.mp3'),
-    jump: new Audio('audio/Jump.ogg'),
-    coin: new Audio('audio/coin.wav'),
-    splash: new Audio('audio/splash.wav'),
-    throwBottle: new Audio('audio/car_spinning.wav'),
-    chickenDead: new Audio('audio/chicken_dead.wav'),
-    chickenAppear: new Audio('audio/Chicken_Sound_Effect.mp3'),
-    hitCharacter: new Audio('audio/hit_character.mp3'),
-    endbossDead: new Audio('audio/deathEndboss.ogg'),
-    gameOver: new Audio('audio/gameover.mp3'),
-    won: new Audio('audio/Won.wav'),
-    pickupBottle: new Audio('audio/pickup.mp3'), 
-    yawn: new Audio('audio/Yawn.wav'),
-    sleep: new Audio('audio/Sleep.wav')
-};
-
-let switchSoundPaths = [
-    'audio/swishes/swish1.wav',
-    'audio/swishes/swish2.wav',
-    'audio/swishes/swish3.wav',
-    'audio/swishes/swish4.wav',
-    'audio/swishes/swish5.wav',
-    'audio/swishes/swish6.wav',
-    'audio/swishes/swish7.wav',
-    'audio/swishes/swish8.wav',
-    'audio/swishes/swish9.wav',
-    'audio/swishes/swish10.wav',
-    'audio/swishes/swish11.wav',
-    'audio/swishes/swish12.wav',
-    'audio/swishes/swish13.wav'
-];
-
-let endbossSoundPaths = [
-    'audio/drunk-dwarf-pack/1.ogg',
-    'audio/drunk-dwarf-pack/2.ogg',
-    'audio/drunk-dwarf-pack/3.ogg',
-    'audio/drunk-dwarf-pack/4.ogg',
-    'audio/drunk-dwarf-pack/5.ogg',
-    'audio/drunk-dwarf-pack/6.ogg',
-    'audio/drunk-dwarf-pack/7.ogg',
-    'audio/drunk-dwarf-pack/8.ogg',
-    'audio/drunk-dwarf-pack/9.ogg',
-    'audio/drunk-dwarf-pack/10.ogg',
-    'audio/drunk-dwarf-pack/11.ogg',
-    'audio/drunk-dwarf-pack/12.ogg',
-    'audio/drunk-dwarf-pack/13.ogg',
-    'audio/drunk-dwarf-pack/14.ogg',
-    'audio/drunk-dwarf-pack/15.ogg',
-    'audio/drunk-dwarf-pack/16.ogg',
-    'audio/drunk-dwarf-pack/17.ogg',
-    'audio/drunk-dwarf-pack/18.ogg',
-    'audio/drunk-dwarf-pack/19.ogg',
-    'audio/drunk-dwarf-pack/20.ogg',
-    'audio/drunk-dwarf-pack/21.ogg',
-    'audio/drunk-dwarf-pack/22.ogg',
-    'audio/drunk-dwarf-pack/23.ogg',
-    'audio/drunk-dwarf-pack/24.ogg',
-    'audio/drunk-dwarf-pack/25.ogg',
-    'audio/drunk-dwarf-pack/26.ogg',
-    'audio/drunk-dwarf-pack/27.ogg',
-    'audio/drunk-dwarf-pack/28.ogg',
-    'audio/drunk-dwarf-pack/29.ogg',
-    'audio/drunk-dwarf-pack/30.ogg',
-    'audio/drunk-dwarf-pack/31.ogg',
-    'audio/drunk-dwarf-pack/32.ogg',
-    'audio/drunk-dwarf-pack/33.ogg',
-    'audio/drunk-dwarf-pack/34.ogg',
-    'audio/drunk-dwarf-pack/35.ogg',
-    'audio/drunk-dwarf-pack/36.ogg',
-    'audio/drunk-dwarf-pack/37.ogg',
-    'audio/drunk-dwarf-pack/38.ogg',
-];
-
-let switchSounds = loadSounds(switchSoundPaths, 0.5);
-let endbossSounds = loadSounds(endbossSoundPaths, 0.8);
-let switchIndex = 0;
-let endbossIndex = 0;
-
-sounds.music.loop = true;
-sounds.music.volume = 0.2;
-sounds.menu.loop = true;
-sounds.menu.volume = 0.2;
-sounds.chickenAppear.volume = 0.4;
-let endbossSoundStart = 0.3;
-let endbossNextPlay = 0;
-let musicStart = 2.5;
+function createAudioContext() {
+    let AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+        audioContext = new AudioContextClass();
+    }
+}
 
 
-function loadSounds(paths, volume) {
-    let list = [];
-    paths.forEach((path) => {
-        let audio = new Audio(path);
-        audio.volume = volume;
-        list.push(audio);
+function loadAllSounds() {
+    createAudioContext();
+    if (!audioContext) {
+        return;
+    }
+    Object.keys(soundFiles).forEach((name) => {
+        loadBuffer(soundFiles[name].path, (buffer) => {
+            soundBuffers[name] = buffer;
+            if (name == 'menu' && menuOpened) {
+                playBackgroundMusic();
+            }
+        });
     });
-    return list;
+    switchSoundPaths.forEach((path, i) => loadBuffer(path, (buffer) => switchBuffers[i] = buffer));
+    endbossSoundPaths.forEach((path, i) => loadBuffer(path, (buffer) => endbossBuffers[i] = buffer));
+}
+
+window.addEventListener('load', loadAllSounds);
+
+
+function loadBuffer(path, callback) {
+    pendingSounds++;
+    fetchBuffer(path)
+        .catch(() => fetchBuffer(path.replace('.ogg', '.mp3')))
+        .then(callback)
+        .catch(() => {})
+        .finally(() => pendingSounds--);
+}
+
+
+function fetchBuffer(path) {
+    return fetch(path)
+        .then((response) => response.arrayBuffer())
+        .then((data) => new Promise((resolve, reject) => {
+            audioContext.decodeAudioData(data, resolve, reject);
+        }));
+}
+
+
+function startSource(name, buffer, volume, loop, offset, duration) {
+    let source = audioContext.createBufferSource();
+    let gain = audioContext.createGain();
+    source.buffer = buffer;
+    source.loop = loop;
+    gain.gain.value = volume;
+    if (name == 'music') {
+        source.playbackRate.value = musicSpeed;
+    }
+    source.connect(gain);
+    gain.connect(audioContext.destination);
+    let entry = { name: name, source: source };
+    activeSources.push(entry);
+    source.onended = () => removeSource(entry);
+    if (duration) {
+        source.start(0, offset, duration);
+    } else {
+        source.start(0, offset);
+    }
+}
+
+
+function removeSource(entry) {
+    activeSources = activeSources.filter((e) => e !== entry);
+}
+
+
+function stopEntry(entry) {
+    try {
+        entry.source.stop();
+    } catch (error) {}
+    removeSource(entry);
+}
+
+
+function isSoundPlaying(name) {
+    return activeSources.some((entry) => entry.name == name);
 }
 
 
 function playSound(name) {
-    if (isMuted) {
+    if (isMuted || !audioContext || !soundBuffers[name]) {
         return;
     }
-    sounds[name].currentTime = 0;
-    sounds[name].play().catch(() => {});
+    startSource(name, soundBuffers[name], soundFiles[name].volume, false, 0);
 }
 
 
 function loopSound(name) {
-    if (isMuted || !sounds[name].paused) {
+    if (isMuted || !audioContext || !soundBuffers[name] || isSoundPlaying(name)) {
         return;
     }
-    sounds[name].loop = true;
-    sounds[name].play().catch(() => {});
+    let offset = name == 'music' ? musicStart : 0;
+    startSource(name, soundBuffers[name], soundFiles[name].volume, true, offset);
 }
 
 
 function stopSound(name) {
-    stopAudio(sounds[name]);
-}
-
-
-function stopAudio(sound) {
-    if (!sound.paused || sound.currentTime > 0) {
-        sound.pause();
-        sound.currentTime = 0;
-    }
+    activeSources.filter((entry) => entry.name == name).forEach(stopEntry);
 }
 
 
 function stopAllSounds() {
-    Object.values(sounds).forEach(stopAudio);
-    switchSounds.forEach(stopAudio);
-    endbossSounds.forEach(stopAudio);
-    sounds.music.playbackRate = 1;
+    activeSources.slice().forEach(stopEntry);
+    musicSpeed = 1;
+}
+
+
+function setMusicSpeed(speed) {
+    musicSpeed = speed;
+    activeSources.filter((entry) => entry.name == 'music').forEach((entry) => {
+        entry.source.playbackRate.value = speed;
+    });
 }
 
 
 function playSwitchSound() {
-    if (isMuted || switchSounds.length == 0) {
+    let list = switchBuffers.filter((buffer) => buffer);
+    if (isMuted || !audioContext || list.length == 0) {
         return;
     }
-    switchSounds[switchIndex].currentTime = 0;
-    switchSounds[switchIndex].play().catch(() => {});
-    switchIndex = (switchIndex + 1) % switchSounds.length;
+    startSource('switch', list[switchIndex % list.length], 0.5, false, 0);
+    switchIndex++;
 }
 
 
 function loopEndbossSounds() {
     let now = new Date().getTime();
-    if (isMuted || endbossSounds.length == 0 || now < endbossNextPlay) {
+    let list = endbossBuffers.filter((buffer) => buffer);
+    if (isMuted || !audioContext || list.length == 0 || now < endbossNextPlay) {
         return;
     }
-    let sound = endbossSounds[endbossIndex];
-    let playTime = getEndbossPlayTime(sound);
-    sound.currentTime = endbossSoundStart;
-    sound.play().catch(() => {});
-    setTimeout(() => stopAudio(sound), playTime * 1000);
+    let buffer = list[endbossIndex % list.length];
+    let playTime = Math.max(Math.min(buffer.duration - endbossSoundStart, 3), 0.3);
+    startSource('endboss', buffer, 0.8, false, endbossSoundStart, playTime);
     endbossNextPlay = now + playTime * 1000;
-    endbossIndex = (endbossIndex + 1) % endbossSounds.length;
-}
-
-
-function getEndbossPlayTime(sound) {
-    let length = sound.duration - endbossSoundStart;
-    if (isNaN(length) || length > 3) {
-        return 3;
-    }
-    return Math.max(length, 0.3);
+    endbossIndex++;
 }
 
 
 function stopEndbossSounds() {
-    endbossSounds.forEach(stopAudio);
+    stopSound('endboss');
     endbossNextPlay = 0;
+}
+
+
+function unlockSounds() {
+    if (!audioContext) {
+        return;
+    }
+    audioContext.resume();
+    let source = audioContext.createBufferSource();
+    source.buffer = audioContext.createBuffer(1, 1, 22050);
+    source.connect(audioContext.destination);
+    source.start(0);
+}
+
+
+function pauseSounds() {
+    if (audioContext) {
+        audioContext.suspend();
+    }
+}
+
+
+function resumeSounds() {
+    if (audioContext) {
+        audioContext.resume();
+        playBackgroundMusic();
+    }
 }
 
 
@@ -206,21 +231,6 @@ function toggleMute() {
     } else if (!isPaused) {
         playBackgroundMusic();
     }
-}
-
-
-function pauseSounds() {
-    Object.values(sounds).forEach((sound) => sound.pause());
-    switchSounds.forEach((sound) => sound.pause());
-    endbossSounds.forEach((sound) => sound.pause());
-}
-
-
-function resumeSounds() {
-    if (isMuted || isStartScreenVisible() || world.gameEnded) {
-        return;
-    }
-    loopSound('music');
 }
 
 
@@ -238,34 +248,11 @@ function playBackgroundMusic() {
     if (isStartScreenVisible()) {
         loopSound('menu');
     } else if (!world.gameEnded) {
-        startGameMusic();
+        loopSound('music');
     }
 }
 
-
-function startGameMusic() {
-    if (sounds.music.paused) {
-        sounds.music.currentTime = musicStart;
-    }
-    loopSound('music');
-}
 
 function isStartScreenVisible() {
     return !document.getElementById('startScreen').classList.contains('d-none');
-}
-
-function setMusicSpeed(speed) {
-    if (sounds.music.playbackRate != speed) {
-        sounds.music.playbackRate = speed;
-    }
-}
-
-function isAnyPlaying(list) {
-    let playing = false;
-    list.forEach((sound) => {
-        if (!sound.paused && !sound.ended && !sound.error) {
-            playing = true;
-        }
-    });
-    return playing;
 }

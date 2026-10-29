@@ -172,9 +172,9 @@ class Character extends MovableObject {
     if (sleeping && !this.wasSleeping) {
         playSound('yawn');
     }
-    if (sleeping && (sounds.yawn.paused || sounds.yawn.ended)) {
-        loopSound('sleep');
-    }
+    if (sleeping && !isSoundPlaying('yawn')) {
+    loopSound('sleep');
+}
     if (!sleeping) {
         stopSound('yawn');
         stopSound('sleep');

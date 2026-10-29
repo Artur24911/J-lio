@@ -23,6 +23,7 @@ function openMenu() {
         return;
     }
     menuOpened = true;
+    unlockSounds();
     hideElement('pressKey');
     showElement('startButtons');
     showElement('settingsButton');
@@ -256,7 +257,7 @@ function trackImage(img) {
 }
 function waitForImages(callback) {
     let check = originalSetInterval(() => {
-        if (pendingImages <= 0) {
+        if (pendingImages <= 0 && pendingSounds <= 0) {
             clearInterval(check);
             callback();
         }
