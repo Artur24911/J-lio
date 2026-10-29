@@ -1,4 +1,20 @@
 let isMuted = localStorage.getItem('isMuted') == 'true';
+// let isMuted = true;
+
+function unlockSounds() {
+    let all = Object.values(sounds).concat(switchSounds, endbossSounds);
+    all.forEach((sound) => {
+        sound.muted = true;
+        sound.play().then(() => {
+            stopAudio(sound);
+            sound.muted = false;
+        }).catch(() => {
+            sound.muted = false;
+        });
+    });
+}
+
+
 
 let sounds = {
     music: new Audio('audio/gameplay.ogg'),
@@ -19,60 +35,60 @@ let sounds = {
 };
 
 let switchSoundPaths = [
-    '../audio/swishes/swish1.wav',
-    '../audio/swishes/swish2.wav',
-    '../audio/swishes/swish3.wav',
-    '../audio/swishes/swish4.wav',
-    '../audio/swishes/swish5.wav',
-    '../audio/swishes/swish6.wav',
-    '../audio/swishes/swish7.wav',
-    '../audio/swishes/swish8.wav',
-    '../audio/swishes/swish9.wav',
-    '../audio/swishes/swish10.wav',
-    '../audio/swishes/swish11.wav',
-    '../audio/swishes/swish12.wav',
-    '../audio/swishes/swish13.wav'
+    'audio/swishes/swish1.wav',
+    'audio/swishes/swish2.wav',
+    'audio/swishes/swish3.wav',
+    'audio/swishes/swish4.wav',
+    'audio/swishes/swish5.wav',
+    'audio/swishes/swish6.wav',
+    'audio/swishes/swish7.wav',
+    'audio/swishes/swish8.wav',
+    'audio/swishes/swish9.wav',
+    'audio/swishes/swish10.wav',
+    'audio/swishes/swish11.wav',
+    'audio/swishes/swish12.wav',
+    'audio/swishes/swish13.wav'
 ];
 
 let endbossSoundPaths = [
-    '../audio/drunk-dwarf-pack/1.ogg',
-    '../audio/drunk-dwarf-pack/2.ogg',
-    '../audio/drunk-dwarf-pack/3.ogg',
-    '../audio/drunk-dwarf-pack/4.ogg',
-    '../audio/drunk-dwarf-pack/5.ogg',
-    '../audio/drunk-dwarf-pack/6.ogg',
-    '../audio/drunk-dwarf-pack/7.ogg',
-    '../audio/drunk-dwarf-pack/8.ogg',
-    '../audio/drunk-dwarf-pack/9.ogg',
-    '../audio/drunk-dwarf-pack/10.ogg',
-    '../audio/drunk-dwarf-pack/11.ogg',
-    '../audio/drunk-dwarf-pack/12.ogg',
-    '../audio/drunk-dwarf-pack/13.ogg',
-    '../audio/drunk-dwarf-pack/14.ogg',
-    '../audio/drunk-dwarf-pack/15.ogg',
-    '../audio/drunk-dwarf-pack/16.ogg',
-    '../audio/drunk-dwarf-pack/17.ogg',
-    '../audio/drunk-dwarf-pack/18.ogg',
-    '../audio/drunk-dwarf-pack/19.ogg',
-    '../audio/drunk-dwarf-pack/20.ogg',
-    '../audio/drunk-dwarf-pack/21.ogg',
-    '../audio/drunk-dwarf-pack/22.ogg',
-    '../audio/drunk-dwarf-pack/23.ogg',
-    '../audio/drunk-dwarf-pack/24.ogg',
-    '../audio/drunk-dwarf-pack/25.ogg',
-    '../audio/drunk-dwarf-pack/26.ogg',
-    '../audio/drunk-dwarf-pack/27.ogg',
-    '../audio/drunk-dwarf-pack/28.ogg',
-    '../audio/drunk-dwarf-pack/29.ogg',
-    '../audio/drunk-dwarf-pack/30.ogg',
-    '../audio/drunk-dwarf-pack/31.ogg',
-    '../audio/drunk-dwarf-pack/32.ogg',
-    '../audio/drunk-dwarf-pack/33.ogg',
-    '../audio/drunk-dwarf-pack/34.ogg',
-    '../audio/drunk-dwarf-pack/35.ogg',
-    '../audio/drunk-dwarf-pack/36.ogg',
-    '../audio/drunk-dwarf-pack/37.ogg',
-    '../audio/drunk-dwarf-pack/38.ogg',
+    'audio/drunk-dwarf-pack/1.ogg',
+    'audio/drunk-dwarf-pack/2.ogg',
+    'audio/drunk-dwarf-pack/3.ogg',
+    'audio/drunk-dwarf-pack/4.ogg',
+    'audio/drunk-dwarf-pack/5.ogg',
+    'audio/drunk-dwarf-pack/6.ogg',
+    'audio/drunk-dwarf-pack/7.ogg',
+    'audio/drunk-dwarf-pack/8.ogg',
+    'audio/drunk-dwarf-pack/9.ogg',
+    'audio/drunk-dwarf-pack/10.ogg',
+    'audio/drunk-dwarf-pack/11.ogg',
+    'audio/drunk-dwarf-pack/12.ogg',
+    'audio/drunk-dwarf-pack/13.ogg',
+    'audio/drunk-dwarf-pack/14.ogg',
+    'audio/drunk-dwarf-pack/15.ogg',
+    'audio/drunk-dwarf-pack/16.ogg',
+    'audio/drunk-dwarf-pack/17.ogg',
+    'audio/drunk-dwarf-pack/18.ogg',
+    'audio/drunk-dwarf-pack/19.ogg',
+    'audio/drunk-dwarf-pack/20.ogg',
+    'audio/drunk-dwarf-pack/21.ogg',
+    'audio/drunk-dwarf-pack/22.ogg',
+    'audio/drunk-dwarf-pack/23.ogg',
+    'audio/drunk-dwarf-pack/24.ogg',
+    'audio/drunk-dwarf-pack/25.ogg',
+    'audio/drunk-dwarf-pack/26.ogg',
+    'audio/drunk-dwarf-pack/27.ogg',
+    'audio/drunk-dwarf-pack/28.ogg',
+    'audio/drunk-dwarf-pack/29.ogg',
+    'audio/drunk-dwarf-pack/30.ogg',
+    'audio/drunk-dwarf-pack/31.ogg',
+    'audio/drunk-dwarf-pack/32.ogg',
+    'audio/drunk-dwarf-pack/33.ogg',
+    'audio/drunk-dwarf-pack/34.ogg',
+    'audio/drunk-dwarf-pack/35.ogg',
+    'audio/drunk-dwarf-pack/36.ogg',
+    'audio/drunk-dwarf-pack/37.ogg',
+    'audio/drunk-dwarf-pack/38.ogg',
 ];
 
 let switchSounds = loadSounds(switchSoundPaths, 0.5);
@@ -125,8 +141,10 @@ function stopSound(name) {
 
 
 function stopAudio(sound) {
-    sound.pause();
-    sound.currentTime = 0;
+    if (!sound.paused || sound.currentTime > 0) {
+        sound.pause();
+        sound.currentTime = 0;
+    }
 }
 
 
@@ -237,7 +255,9 @@ function isStartScreenVisible() {
 }
 
 function setMusicSpeed(speed) {
-    sounds.music.playbackRate = speed;
+    if (sounds.music.playbackRate != speed) {
+        sounds.music.playbackRate = speed;
+    }
 }
 
 function isAnyPlaying(list) {

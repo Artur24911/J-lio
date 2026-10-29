@@ -9,12 +9,14 @@ class DrawableObject {
 
     loadImage(path) {
         this.img = new Image();
+        trackImage(this.img);
         this.img.src = path;
     }
 
     loadImages(arr) {
         arr.forEach((path) => {
             let img = new Image();
+            trackImage(img);
             img.src = path;
             this.imageCache[path] = img;
         });
@@ -22,8 +24,9 @@ class DrawableObject {
 
 
     draw(ctx) {
+         if (this.img && this.img.complete && this.img.naturalWidth > 0) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-
+    }
     }
 
     drawFrame(ctx) {

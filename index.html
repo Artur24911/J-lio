@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
     <title>Júlio</title>
-    <link rel="icon" href="./img/android-chrome-512x512.png" type="image/x-icon">
+    <link rel="icon" href="./img/android-chrome-512x512.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <script src="./js/sounds.js"></script>
     <script src="./models/drawable-object.class.js"></script>
@@ -32,11 +35,19 @@
 </head>
 
 <body>
+
+    <div class="rotate-hint">
+        <p>Bitte drehe dein Gerät ins Querformat, um zu spielen.</p>
+    </div>
     <h1>Júlio</h1>
 
     <div class="game-area">
-        <div id="startScreen" class="start-screen">
-            <p id="pressKey" class="press-key">Press a key</p>
+        <div id="startScreen" class="start-screen" onclick="openMenu()">
+
+            <p id="pressKey" class="press-key">
+                <span class="key-hint">Press a key</span>
+                <span class="tap-hint">Tap to start</span>
+            </p>
             <div id="startButtons" class="start-buttons d-none">
                 <button class="game-button" onclick="showElement('helpDialog')">Anleitung</button>
                 <button class="game-button big" onclick="startGame()">Start</button>
@@ -65,17 +76,21 @@
                         wirfst. Besiege den Endboss, um zu gewinnen.</p>
                 </div>
             </div>
-            <div id="impressumDialog" class="dialog-backdrop d-none" onclick="hideElement('impressumDialog')">
-                <div class="dialog" onclick="event.stopPropagation()">
-                    <button class="close-button" onclick="hideElement('impressumDialog')">X</button>
-                    <h2>Impressum</h2>
-                    <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
-                    <p>E-Mail: beispiel@example.com</p>
-                </div>
-            </div>
+
         </div>
 
         <canvas id="canvas" class="d-none" width="720" height="480"></canvas>
+
+        <div id="touchControls" class="touch-controls d-none" oncontextmenu="return false;">
+            <div class="touch-group">
+                <button id="touchLeft" class="game-button touch-button">←</button>
+                <button id="touchRight" class="game-button touch-button">→</button>
+            </div>
+            <div class="touch-group">
+                <button id="touchThrow" class="game-button touch-button">Wurf</button>
+                <button id="touchJump" class="game-button touch-button">↑</button>
+            </div>
+        </div>
         <button id="settingsButton" class="game-button settings-button d-none" onclick="openSettings()"
             title="Einstellungen">
             <img src="img/zahnrad_button_spiel.png" alt="Einstellungen">
@@ -89,6 +104,7 @@
                 <button class="close-button" onclick="closeSettings()">X</button>
                 <h2>Einstellungen</h2>
                 <div class="dialog-buttons">
+                    <button id="fullscreenButton" class="game-button" onclick="toggleFullscreen()">Vollbild</button>
                     <button id="muteButton" class="game-button" onclick="toggleMute()">Ton an</button>
                     <button id="quitButton" class="game-button" onclick="quitGame()">Spiel abbrechen</button>
                     <button class="game-button" onclick="openImpressum()">Impressum</button>
@@ -96,13 +112,16 @@
             </div>
         </div>
 
-        <div id="impressumDialog" class="dialog-backdrop d-none" onclick="hideElement('impressumDialog')">
+        <div id="impressumDialog" class="dialog-backdrop d-none" onclick="closeImpressum()">
             <div class="dialog" onclick="event.stopPropagation()">
-                <button class="close-button" onclick="hideElement('impressumDialog')">X</button>
+                <button class="close-button" onclick="closeImpressum()">X</button>
                 <h2>Impressum</h2>
                 <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
                 <p>E-Mail: beispiel@example.com</p>
             </div>
+        </div>
+        <div id="loadingScreen" class="loading-screen d-none">
+            <p>Lädt ...</p>
         </div>
     </div>
 </body>

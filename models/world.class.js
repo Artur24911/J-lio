@@ -172,19 +172,21 @@ class World {
         cancelAnimationFrame(this.animationFrame);
     }
 
-    addObjectsToMap(objects) {
-        objects.forEach(o => {
+   addObjectsToMap(objects) {
+    objects.forEach((o) => {
+        if (this.isOnScreen(o)) {
             this.addToMap(o);
-        })
-    }
+        }
+    });
+}
 
     addToMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
-        mo.drawFrameOffset(this.ctx);
+        // mo.drawFrame(this.ctx);
+        // mo.drawFrameOffset(this.ctx);
 
 
         if (mo.otherDirection) {
