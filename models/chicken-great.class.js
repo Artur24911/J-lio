@@ -1,3 +1,6 @@
+/**
+ * Großes Huhn, das schneller nach links läuft.
+ */
 class ChickenGreat extends MovableObject {
     hasEnteredScreen = false;
     height = 90;
@@ -22,42 +25,56 @@ class ChickenGreat extends MovableObject {
         'img/grabkreuz_chicken_spiel.png'
     ];
 
-    constructor() {
 
+    /**
+     * Erzeugt ein großes Huhn an einer zufälligen Position außerhalb des Bildes.
+     */
+    constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
-        this.x = 800 + Math.random() * 1200;
-        this.speed = 2.5 + Math.random() * 0.55
         this.loadImages(this.IMAGES_DEAD);
+        this.x = 800 + Math.random() * 1200;
+        this.speed = 2.5 + Math.random() * 0.55;
         this.animate();
     }
 
 
-
+    /**
+     * Startet die Schleifen für Bewegung und Animation.
+     */
     animate() {
-
-        setInterval(() => {
-            if (!this.isDead()) {
-                this.moveLeft();
-            }
-        }, 1000 / 30)
-        setInterval(() => {
-            if (this.isDead()) {
-                this.showDeadImage();
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }, 1000 / 8);
+        setInterval(() => this.updateMovement(), 1000 / 30);
+        setInterval(() => this.updateImage(), 1000 / 8);
     }
 
-    showDeadImage() {
-        if (this.isHurt()) {
-            this.img = this.imageCache[this.IMAGES_DEAD[0]];
-        } else {
-            this.img = this.imageCache[this.IMAGES_DEAD[1]];
+
+    /**
+     * Läuft nach links, solange das Huhn lebt.
+     */
+    updateMovement() {
+        if (!this.isDead()) {
+            this.moveLeft();
         }
     }
 
 
+    /**
+     * Zeigt Laufbild oder, wenn tot, das Tot-Bild.
+     */
+    updateImage() {
+        if (this.isDead()) {
+            this.showDeadImage();
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
 
+
+    /**
+     * Zeigt kurz das Tot-Bild und danach dauerhaft das Kreuz.
+     */
+    showDeadImage() {
+        let index = this.isHurt() ? 0 : 1;
+        this.img = this.imageCache[this.IMAGES_DEAD[index]];
+    }
 }

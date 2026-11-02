@@ -1,8 +1,3 @@
-@font-face {
-    font-family: 'zabars';
-    src: url('fonts/Zabars.ttf') format('truetype');
-}
-
 body {
     display: flex;
     flex-direction: column;
@@ -34,7 +29,6 @@ canvas {
 .start-screen {
     position: relative;
     width: 100%;
-    /* height: 480px; */
     box-sizing: border-box;
     display: flex;
     justify-content: center;
@@ -145,8 +139,6 @@ canvas {
     text-shadow: 2px 2px 0 #8a2a08;
     animation: blink 1.2s infinite;
 }
-
-
 
 .settings-button img {
     display: block;
@@ -314,9 +306,6 @@ canvas {
 }
 
 @media only screen and (max-width: 720px) {
-    /* canvas {
-        width: 100%;
-    } */
 
     h1 {
         display: none;
@@ -329,17 +318,10 @@ canvas {
 }
 
 @media only screen and (max-height: 480px) {
-    /* canvas {
-        height: 100vh;
-    } */
 
     h1 {
         display: none;
     }
-
-    /* .start-screen {
-        height: 100vh;
-    } */
 
     .game-button {
         font-size: 18px;

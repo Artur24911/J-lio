@@ -1,4 +1,7 @@
-class Keyboard{
+/**
+ * Speichert, welche Spieltasten gerade gedrückt sind.
+ */
+class Keyboard {
     LEFT = false;
     RIGHT = false;
     UP = false;

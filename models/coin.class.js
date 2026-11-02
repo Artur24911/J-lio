@@ -1,3 +1,6 @@
+/**
+ * Eine Münze, die der Charakter einsammeln kann.
+ */
 class Coin extends DrawableObject {
     width = 100;
     height = 100;
@@ -9,6 +12,12 @@ class Coin extends DrawableObject {
         bottom: 10
     };
 
+
+    /**
+     * Erzeugt eine Münze.
+     * @param {number} x - Position im Level
+     * @param {number} y - Höhe im Level
+     */
     constructor(x, y) {
         super().loadImage('img/8_coin/coin_1.png');
         this.x = x;

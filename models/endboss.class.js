@@ -1,3 +1,6 @@
+/**
+ * Der Endboss, der den Charakter nach dem ersten Kontakt jagt.
+ */
 class Endboss extends MovableObject {
     energy = 3;
     height = 400;
@@ -6,7 +9,8 @@ class Endboss extends MovableObject {
     speed = 4;
     isChasing = false;
     deathStarted = false;
-
+    hadFirstContact = false;
+    stateTick = 0;
 
     offset = {
         top: 100,
@@ -14,7 +18,6 @@ class Endboss extends MovableObject {
         right: 30,
         bottom: 40,
     };
-
 
     IMAGES_ALERT = [
         'img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -45,7 +48,6 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/3_attack/G20.png'
     ];
 
-
     IMAGES_HURT = [
         'img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/4_enemie_boss_chicken/4_hurt/G22.png',
@@ -58,9 +60,10 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
-    hadFirstContact = false;
 
-
+    /**
+     * Erzeugt den Endboss am Ende des Levels und lädt seine Bilder.
+     */
     constructor() {
         super().loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
@@ -71,44 +74,82 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
+
+    /**
+     * Startet die Schleifen für Zustand und Verfolgung.
+     */
     animate() {
-        let i = 0;
-        setInterval(() => {
-            if (this.isDead()) {
-                if (!this.deathStarted) {
-                    this.deathStarted = true;
-                    this.currentImage = 0;
-                }
-                if (this.currentImage < this.IMAGES_DEAD.length) {
-                    this.playAnimation(this.IMAGES_DEAD);
-                }
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (i < 10) {
-                this.playAnimation(this.IMAGES_ALERT);
-              
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-                
-            }
-            i++;
-            if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
-                i = 0;
-                this.hadFirstContact = true;
-
-            }
-            this.isChasing = this.hadFirstContact && i >= 10 && !this.isHurt() && !this.isDead();
-              this.updateSound();
-        }, 200);
-
-        setInterval(() => {
-            if (this.isChasing) {
-                this.chaseCharacter();
-
-            }
-        }, 1000 / 60);
+        setInterval(() => this.updateState(), 200);
+        setInterval(() => this.updateChase(), 1000 / 60);
     }
 
+
+    /**
+     * Aktualisiert Animation, Kontakt, Verfolgung und Sound des Bosses.
+     */
+    updateState() {
+        this.updateAnimation();
+        this.stateTick++;
+        this.checkFirstContact();
+        this.isChasing = this.hadFirstContact && this.stateTick >= 10 && !this.isHurt() && !this.isDead();
+        this.updateSound();
+    }
+
+
+    /**
+     * Wählt die Animation: Tod, Verletzt, Alert (Wut) oder Laufen.
+     */
+    updateAnimation() {
+        if (this.isDead()) {
+            this.playDeathAnimation();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.stateTick < 10) {
+            this.playAnimation(this.IMAGES_ALERT);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+
+    /**
+     * Spielt die Todesanimation einmal ab und bleibt beim letzten Bild.
+     */
+    playDeathAnimation() {
+        if (!this.deathStarted) {
+            this.deathStarted = true;
+            this.currentImage = 0;
+        }
+        if (this.currentImage < this.IMAGES_DEAD.length) {
+            this.playAnimation(this.IMAGES_DEAD);
+        }
+    }
+
+
+    /**
+     * Startet beim ersten Kontakt mit dem Charakter die Alert-Animation.
+     */
+    checkFirstContact() {
+        if (world && !this.hadFirstContact && this.x - world.character.x < 500) {
+            this.stateTick = 0;
+            this.hadFirstContact = true;
+        }
+    }
+
+
+    /**
+     * Läuft auf den Charakter zu, solange der Boss ihn jagt.
+     */
+    updateChase() {
+        if (this.isChasing) {
+            this.chaseCharacter();
+        }
+    }
+
+
+    /**
+     * Läuft in Richtung des Charakters und dreht sich dabei um.
+     */
     chaseCharacter() {
         if (world.character.x < this.x) {
             this.moveLeft();
@@ -119,8 +160,12 @@ class Endboss extends MovableObject {
         }
     }
 
+
+    /**
+     * Spielt die Boss-Sounds und beschleunigt die Musik, solange der Boss kämpft.
+     */
     updateSound() {
-        if (this.hadFirstContact) {
+        if (this.hadFirstContact && !this.isDead()) {
             loopEndbossSounds();
             setMusicSpeed(1.3);
         } else {

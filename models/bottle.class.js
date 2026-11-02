@@ -1,3 +1,6 @@
+/**
+ * Eine Flasche am Boden, die der Charakter einsammeln kann.
+ */
 class Bottle extends DrawableObject {
     width = 60;
     height = 70;
@@ -15,6 +18,11 @@ class Bottle extends DrawableObject {
         bottom: 5
     };
 
+
+    /**
+     * Erzeugt eine Flasche mit zufälligem Bild.
+     * @param {number} x - Position im Level
+     */
     constructor(x) {
         super().loadImage(this.IMAGES[Math.floor(Math.random() * this.IMAGES.length)]);
         this.x = x;

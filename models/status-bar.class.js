@@ -1,6 +1,7 @@
+/**
+ * Eine Statusanzeige für Leben, Flaschen oder Münzen.
+ */
 class StatusBar extends DrawableObject {
-
-
     STATUS_HEALTH = [
         'img/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png',
         'img/7_statusbars/1_statusbar/2_statusbar_health/orange/20.png',
@@ -37,41 +38,58 @@ class StatusBar extends DrawableObject {
         'img/7_statusbars/2_statusbar_endboss/orange/orange100.png'
     ];
 
-
     percentage = 100;
 
-    constructor(type, y) {
-    super();
-    if (type == 'bottle') {
-        this.images = this.STATUS_BOTTLE;
-    } else if (type == 'coin') {
-        this.images = this.STATUS_COIN;
-    } else {
-        this.images = this.STATUS_HEALTH;
-    }
-    this.loadImages(this.images);
-    this.x = 10;
-    this.y = y;
-    this.width = 200;
-    this.height = 40;
-    if (type == 'health') {
-        this.setPercentage(100);
-    } else {
-        this.setPercentage(0);
-    }
-}
 
+    /**
+     * Erzeugt eine Statusanzeige.
+     * @param {string} type - 'health', 'bottle' oder 'coin'
+     * @param {number} y - Höhe der Anzeige im Bild
+     */
+    constructor(type, y) {
+        super();
+        this.images = this.getImages(type);
+        this.loadImages(this.images);
+        this.x = 10;
+        this.y = y;
+        this.width = 200;
+        this.height = 40;
+        this.setPercentage(type == 'health' ? 100 : 0);
+    }
+
+
+    /**
+     * Liefert die Bilderfolge passend zum Typ.
+     * @param {string} type - 'health', 'bottle' oder 'coin'
+     * @returns {string[]} Liste der Bildpfade
+     */
+    getImages(type) {
+        if (type == 'bottle') {
+            return this.STATUS_BOTTLE;
+        }
+        if (type == 'coin') {
+            return this.STATUS_COIN;
+        }
+        return this.STATUS_HEALTH;
+    }
+
+
+    /**
+     * Setzt den Füllstand und zeigt das passende Bild.
+     * @param {number} percentage - Wert von 0 bis 100
+     */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.images[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
 
+
+    /**
+     * Rechnet den Füllstand in die Nummer des Bildes um.
+     * @returns {number} Nummer des Bildes von 0 bis 5
+     */
     resolveImageIndex() {
         return Math.floor(this.percentage / 20);
     }
-
-
-
-
 }
