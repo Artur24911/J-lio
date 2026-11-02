@@ -1,6 +1,3 @@
-/**
- * Eine Statusanzeige für Leben, Flaschen oder Münzen.
- */
 class StatusBar extends DrawableObject {
     STATUS_HEALTH = [
         'img/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png',
@@ -40,12 +37,7 @@ class StatusBar extends DrawableObject {
 
     percentage = 100;
 
-
-    /**
-     * Erzeugt eine Statusanzeige.
-     * @param {string} type - 'health', 'bottle' oder 'coin'
-     * @param {number} y - Höhe der Anzeige im Bild
-     */
+    /** Generates a status display. */
     constructor(type, y) {
         super();
         this.images = this.getImages(type);
@@ -57,12 +49,7 @@ class StatusBar extends DrawableObject {
         this.setPercentage(type == 'health' ? 100 : 0);
     }
 
-
-    /**
-     * Liefert die Bilderfolge passend zum Typ.
-     * @param {string} type - 'health', 'bottle' oder 'coin'
-     * @returns {string[]} Liste der Bildpfade
-     */
+    /** Delivers the image sequence matching the type. */
     getImages(type) {
         if (type == 'bottle') {
             return this.STATUS_BOTTLE;
@@ -73,22 +60,14 @@ class StatusBar extends DrawableObject {
         return this.STATUS_HEALTH;
     }
 
-
-    /**
-     * Setzt den Füllstand und zeigt das passende Bild.
-     * @param {number} percentage - Wert von 0 bis 100
-     */
+    /** Sets the fill level and shows the corresponding image. */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.images[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
 
-
-    /**
-     * Rechnet den Füllstand in die Nummer des Bildes um.
-     * @returns {number} Nummer des Bildes von 0 bis 5
-     */
+    /** Convert the fill level into the number of the picture. */
     resolveImageIndex() {
         return Math.floor(this.percentage / 20);
     }

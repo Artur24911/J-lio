@@ -16,13 +16,7 @@ let keyMap = {
     c: 'C'
 };
 
-
-/**
- * Ersetzt setInterval: Spiel-Schleifen laufen nur, wenn das Spiel gestartet und nicht pausiert ist.
- * @param {Function} callback - Funktion, die regelmäßig ausgeführt wird
- * @param {number} delay - Abstand in Millisekunden
- * @returns {number} ID des Intervalls
- */
+/**Replaces setInterval: Game loops only run when the game is started and not paused. */
 window.setInterval = function (callback, delay) {
     return originalSetInterval(() => {
         if (isGameStarted && !isPaused) {
@@ -31,10 +25,7 @@ window.setInterval = function (callback, delay) {
     }, delay);
 };
 
-
-/**
- * Öffnet das Menü nach dem ersten Tastendruck oder Tippen (Press a key).
- */
+/** Opens the menu after the first key press or tap (Press a key). */
 function openMenu() {
     if (menuOpened) {
         return;
@@ -48,20 +39,14 @@ function openMenu() {
     playBackgroundMusic();
 }
 
-
-/**
- * Erzeugt Level und Welt (wird im Hintergrund vorbereitet).
- */
+/** Generates level and world (prepared in the background). */
 function init() {
     canvas = document.getElementById('canvas');
     initLevel();
     world = new World(canvas, keyboard);
 }
 
-
-/**
- * Startet das Spiel über den Start-Button.
- */
+/** Start the game using the start button. */
 function startGame() {
     unlockSounds();
     hideElement('startScreen');
@@ -71,19 +56,13 @@ function startGame() {
     beginGame();
 }
 
-
-/**
- * Startet das Spiel nach Spielende neu, ohne die Seite neu zu laden.
- */
+/** Restart the game after it ends without reloading the page. */
 function restartGame() {
     stopCurrentGame();
     beginGame();
 }
 
-
-/**
- * Beendet das Spiel und kehrt zum Startbildschirm zurück.
- */
+/** Quit the game and return to the main menu. */
 function goHome() {
     stopCurrentGame();
     hideElement('canvas');
@@ -94,10 +73,7 @@ function goHome() {
     prepareGame();
 }
 
-
-/**
- * Stoppt Zeichnen, Intervalle, Sounds und Eingaben des laufenden Spiels.
- */
+/** Stops drawing, intervals, sounds, and inputs of the running game. */
 function stopCurrentGame() {
     world.stop();
     stopGame();
@@ -109,10 +85,7 @@ function stopCurrentGame() {
     isPrepared = false;
 }
 
-
-/**
- * Setzt alle Tastenzustände auf "nicht gedrückt".
- */
+/** Sets all key states to 'not pressed'. */
 function resetKeyboard() {
     keyboard.LEFT = false;
     keyboard.RIGHT = false;
@@ -122,10 +95,7 @@ function resetKeyboard() {
     keyboard.C = false;
 }
 
-
-/**
- * Öffnet das Einstellungsfenster und pausiert dabei ein laufendes Spiel.
- */
+/** Opens the settings window and pauses any game currently running. */
 function openSettings() {
     document.getElementById('settingsButton').blur();
     updateMuteButton();
@@ -140,37 +110,25 @@ function openSettings() {
     showElement('settingsDialog');
 }
 
-
-/**
- * Schließt das Einstellungsfenster und setzt das Spiel fort.
- */
+/** Closes the settings window and resumes the game. */
 function closeSettings() {
     hideElement('settingsDialog');
     resumeGame();
 }
 
-
-/**
- * Schließt das Impressum und setzt das Spiel fort.
- */
+/** Closes the impressum and resumes the game. */
 function closeImpressum() {
     hideElement('impressumDialog');
     resumeGame();
 }
 
-
-/**
- * Hält das Spiel und die Sounds an.
- */
+/** Pauses the game and the sounds. */
 function pauseGame() {
     isPaused = true;
     pauseSounds();
 }
 
-
-/**
- * Setzt ein pausiertes Spiel fort.
- */
+/** Resumes a paused game. */
 function resumeGame() {
     if (!isPaused) {
         return;
@@ -179,40 +137,24 @@ function resumeGame() {
     resumeSounds();
 }
 
-
-/**
- * Zeigt ein Element an.
- * @param {string} id - ID des Elements
- */
+/** Displays an element. */
 function showElement(id) {
     document.getElementById(id).classList.remove('d-none');
 }
 
-
-/**
- * Versteckt ein Element.
- * @param {string} id - ID des Elements
- */
+/** Hides an element. */
 function hideElement(id) {
     document.getElementById(id).classList.add('d-none');
 }
 
-
-/**
- * Beendet alle laufenden Intervalle.
- */
+/** Stops all running intervals. */
 function stopGame() {
     for (let i = 1; i < 99999; i++) {
         clearInterval(i);
     }
 }
 
-
-/**
- * Merkt sich, ob eine Spieltaste gedrückt oder losgelassen wurde.
- * @param {KeyboardEvent} event - Tastenereignis
- * @param {boolean} isPressed - true bei Drücken, false bei Loslassen
- */
+/** Remembers whether a game button was pressed or released. */
 function setKeyState(event, isPressed) {
     let name = keyMap[event.key.toLowerCase()];
     if (name) {
@@ -220,30 +162,19 @@ function setKeyState(event, isPressed) {
     }
 }
 
-
-/**
- * Beendet das laufende Spiel über die Einstellungen und zeigt den Startbildschirm.
- */
+/** Ends the current game through the settings and shows the start screen. */
 function quitGame() {
     hideElement('settingsDialog');
     goHome();
 }
 
-
-/**
- * Öffnet das Impressum aus den Einstellungen.
- */
+/** Open the imprint from the settings. */
 function openImpressum() {
     hideElement('settingsDialog');
     showElement('impressumDialog');
 }
 
-
-/**
- * Verbindet einen Touch-Button mit einer Taste.
- * @param {string} id - ID des Buttons
- * @param {string} key - Name der Taste im Keyboard-Objekt
- */
+/** Connects a touch button to a key. */
 function bindTouchButton(id, key) {
     let button = document.getElementById(id);
     button.addEventListener('touchstart', (event) => handleTouch(event, key, true), { passive: false });
@@ -251,22 +182,13 @@ function bindTouchButton(id, key) {
     button.addEventListener('touchcancel', (event) => handleTouch(event, key, false));
 }
 
-
-/**
- * Setzt die Taste eines Touch-Buttons und verhindert Scrollen und Zoomen.
- * @param {TouchEvent} event - Touch-Ereignis
- * @param {string} key - Name der Taste im Keyboard-Objekt
- * @param {boolean} isPressed - true beim Berühren, false beim Loslassen
- */
+/** Sets the button of a touch button and prevents scrolling and zooming. */
 function handleTouch(event, key, isPressed) {
     event.preventDefault();
     keyboard[key] = isPressed;
 }
 
-
-/**
- * Verbindet alle vier Touch-Buttons.
- */
+/** Connect all four touch buttons. */
 function bindTouchControls() {
     bindTouchButton('touchLeft', 'LEFT');
     bindTouchButton('touchRight', 'RIGHT');
@@ -274,10 +196,7 @@ function bindTouchControls() {
     bindTouchButton('touchThrow', 'C');
 }
 
-
-/**
- * Wechselt zwischen Vollbild und normaler Ansicht.
- */
+/** Switches between full screen and normal view. */
 function toggleFullscreen() {
     if (document.fullscreenElement || document.webkitFullscreenElement) {
         exitFullscreen();
@@ -286,10 +205,7 @@ function toggleFullscreen() {
     }
 }
 
-
-/**
- * Schaltet in den Vollbildmodus.
- */
+/** Switches to full-screen mode. */
 function enterFullscreen() {
     let element = document.documentElement;
     if (element.requestFullscreen) {
@@ -299,10 +215,7 @@ function enterFullscreen() {
     }
 }
 
-
-/**
- * Verlässt den Vollbildmodus.
- */
+/** Exits full screen mode. */
 function exitFullscreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -311,31 +224,20 @@ function exitFullscreen() {
     }
 }
 
-
-/**
- * Prüft, ob der Browser Vollbild unterstützt.
- * @returns {boolean} true, wenn Vollbild möglich ist
- */
+/** Checks if the browser supports fullscreen. */
 function isFullscreenSupported() {
     let element = document.documentElement;
     return !!(element.requestFullscreen || element.webkitRequestFullscreen);
 }
 
-
-/**
- * Versteckt den Vollbild-Button, wenn der Browser kein Vollbild kann.
- */
+/** Hide the fullscreen button if the browser can't do fullscreen. */
 function setupFullscreenButton() {
     if (!isFullscreenSupported()) {
         hideElement('fullscreenButton');
     }
 }
 
-
-/**
- * Zählt ein Bild als "wird geladen", bis es fertig geladen und entpackt ist.
- * @param {HTMLImageElement} img - Das Bild
- */
+/** An image counts as 'loading' until it is fully loaded and unpacked. */
 function trackImage(img) {
     pendingImages++;
     let finish = () => pendingImages--;
@@ -349,11 +251,7 @@ function trackImage(img) {
     img.onerror = finish;
 }
 
-
-/**
- * Wartet, bis alle Bilder und Sounds geladen sind, und ruft dann die Funktion auf.
- * @param {Function} callback - Wird nach dem Laden aufgerufen
- */
+/** Wait until all the images and sounds are loaded, and then call the function. */
 function waitForImages(callback) {
     let check = originalSetInterval(() => {
         if (pendingImages <= 0 && pendingSounds <= 0) {
@@ -363,10 +261,7 @@ function waitForImages(callback) {
     }, 100);
 }
 
-
-/**
- * Bereitet das Spiel im Hintergrund vor (einmal pro Durchgang).
- */
+/** Prepares the game in the background (once per run). */
 function prepareGame() {
     if (isPrepared) {
         return;
@@ -375,10 +270,7 @@ function prepareGame() {
     init();
 }
 
-
-/**
- * Zeigt den Ladebildschirm und startet das Spiel, sobald alles geladen ist.
- */
+/** Shows the loading screen and starts the game as soon as everything is loaded. */
 function beginGame() {
     showElement('loadingScreen');
     showElement('touchControls');
@@ -387,17 +279,13 @@ function beginGame() {
     waitForImages(finishLoading);
 }
 
-
-/**
- * Gibt das Spiel nach dem Laden frei und startet die Musik.
- */
+/** Unlocks the game after loading and starts the music. */
 function finishLoading() {
     hideElement('loadingScreen');
     isGameStarted = true;
     world.character.lastAction = new Date().getTime();
     playBackgroundMusic();
 }
-
 
 window.addEventListener('keydown', openMenu);
 window.addEventListener('click', openMenu);

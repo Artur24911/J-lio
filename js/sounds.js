@@ -11,7 +11,6 @@ let endbossNextPlay = 0;
 let endbossSoundStart = 0.3;
 let musicStart = 2.5;
 let musicSpeed = 1;
-
 let soundFiles = {
     music: { path: 'audio/gameplay.ogg', volume: 0.2 },
     menu: { path: 'audio/menusound.mp3', volume: 0.2 },
@@ -40,10 +39,7 @@ for (let i = 1; i <= 38; i++) {
     endbossSoundPaths.push('audio/drunk-dwarf-pack/' + i + '.ogg');
 }
 
-
-/**
- * Erzeugt den Audio-Kontext des Browsers (auch für ältere Safari-Versionen).
- */
+/** Creates the browser's audio context (also for older Safari versions). */
 function createAudioContext() {
     let AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (AudioContextClass) {
@@ -51,10 +47,7 @@ function createAudioContext() {
     }
 }
 
-
-/**
- * Lädt alle Sounds beim Öffnen der Seite.
- */
+/** Loads all sounds when the page opens. */
 function loadAllSounds() {
     createAudioContext();
     if (!audioContext) {
@@ -65,22 +58,14 @@ function loadAllSounds() {
     loadSoundList(endbossSoundPaths, endbossBuffers);
 }
 
-
-/**
- * Lädt die benannten Sounds aus der Liste soundFiles.
- */
+/** Loads the named sounds from the soundFiles list. */
 function loadNamedSounds() {
     Object.keys(soundFiles).forEach((name) => {
         loadBuffer(soundFiles[name].path, (buffer) => onSoundLoaded(name, buffer));
     });
 }
 
-
-/**
- * Speichert einen geladenen Sound und startet bei Bedarf die Menümusik.
- * @param {string} name - Name des Sounds
- * @param {AudioBuffer} buffer - Der entpackte Sound
- */
+/** Saves a loaded sound and starts the menu music when needed. */
 function onSoundLoaded(name, buffer) {
     soundBuffers[name] = buffer;
     if (name == 'menu' && menuOpened) {
@@ -88,22 +73,12 @@ function onSoundLoaded(name, buffer) {
     }
 }
 
-
-/**
- * Lädt eine Liste von Sounds in eine Ziel-Liste.
- * @param {string[]} paths - Pfade der Sounddateien
- * @param {AudioBuffer[]} targetList - Liste, in die die Sounds gespeichert werden
- */
+/** Loads a list of sounds into a target list. */
 function loadSoundList(paths, targetList) {
     paths.forEach((path, i) => loadBuffer(path, (buffer) => targetList[i] = buffer));
 }
 
-
-/**
- * Lädt eine Sounddatei (bei .ogg zur Not als .mp3) und zählt sie als "wird geladen".
- * @param {string} path - Pfad der Sounddatei
- * @param {Function} callback - Wird mit dem entpackten Sound aufgerufen
- */
+/** Loads a sound file (if it's .ogg, as a last resort .mp3) and counts it as "loading". */
 function loadBuffer(path, callback) {
     pendingSounds++;
     fetchBuffer(path)
@@ -113,12 +88,7 @@ function loadBuffer(path, callback) {
         .finally(() => pendingSounds--);
 }
 
-
-/**
- * Holt eine Sounddatei vom Server und entpackt sie.
- * @param {string} path - Pfad der Sounddatei
- * @returns {Promise<AudioBuffer>} Der entpackte Sound
- */
+/** Fetch a sound file from the server and unpack it. */
 function fetchBuffer(path) {
     return fetch(path)
         .then((response) => response.arrayBuffer())
@@ -127,16 +97,7 @@ function fetchBuffer(path) {
         }));
 }
 
-
-/**
- * Spielt einen Sound ab und merkt ihn sich als aktiv.
- * @param {string} name - Name des Sounds
- * @param {AudioBuffer} buffer - Der Sound
- * @param {number} volume - Lautstärke von 0 bis 1
- * @param {boolean} loop - true für Dauerschleife
- * @param {number} offset - Startpunkt in Sekunden
- * @param {number} [duration] - Spieldauer in Sekunden
- */
+/** Plays a sound and remembers it as active. */
 function startSource(name, buffer, volume, loop, offset, duration) {
     let source = audioContext.createBufferSource();
     source.buffer = buffer;
@@ -149,12 +110,7 @@ function startSource(name, buffer, volume, loop, offset, duration) {
     source.start(0, offset, duration);
 }
 
-
-/**
- * Verbindet einen Sound über einen Lautstärkeregler mit dem Ausgang.
- * @param {AudioBufferSourceNode} source - Der Sound-Knoten
- * @param {number} volume - Lautstärke von 0 bis 1
- */
+/** Connects a sound to the output through a volume control. */
 function connectSource(source, volume) {
     let gain = audioContext.createGain();
     gain.gain.value = volume;
@@ -162,32 +118,19 @@ function connectSource(source, volume) {
     gain.connect(audioContext.destination);
 }
 
-
-/**
- * Merkt sich einen aktiven Sound und entfernt ihn nach dem Ende wieder.
- * @param {string} name - Name des Sounds
- * @param {AudioBufferSourceNode} source - Der Sound-Knoten
- */
+/** Remembers an active sound and removes it again after it ends. */
 function registerSource(name, source) {
     let entry = { name: name, source: source };
     activeSources.push(entry);
     source.onended = () => removeSource(entry);
 }
 
-
-/**
- * Entfernt einen Sound aus der Liste der aktiven Sounds.
- * @param {Object} entry - Eintrag mit Name und Sound-Knoten
- */
+/** Removes a sound from the list of active sounds. */
 function removeSource(entry) {
     activeSources = activeSources.filter((e) => e !== entry);
 }
 
-
-/**
- * Stoppt einen aktiven Sound.
- * @param {Object} entry - Eintrag mit Name und Sound-Knoten
- */
+/** Stops an active sound. */
 function stopEntry(entry) {
     try {
         entry.source.stop();
@@ -195,21 +138,12 @@ function stopEntry(entry) {
     removeSource(entry);
 }
 
-
-/**
- * Prüft, ob ein Sound gerade läuft.
- * @param {string} name - Name des Sounds
- * @returns {boolean} true, wenn der Sound läuft
- */
+/** Checks if a sound is currently playing. */
 function isSoundPlaying(name) {
     return activeSources.some((entry) => entry.name == name);
 }
 
-
-/**
- * Spielt einen Sound einmal ab.
- * @param {string} name - Name des Sounds
- */
+/** Plays a sound once. */
 function playSound(name) {
     if (isMuted || !audioContext || !soundBuffers[name]) {
         return;
@@ -217,11 +151,7 @@ function playSound(name) {
     startSource(name, soundBuffers[name], soundFiles[name].volume, false, 0);
 }
 
-
-/**
- * Spielt einen Sound nur ab, wenn er nicht schon läuft.
- * @param {string} name - Name des Sounds
- */
+/** Only plays a sound if it's not already playing. */
 function playSoundIfFree(name) {
     if (isSoundPlaying(name)) {
         return;
@@ -229,11 +159,7 @@ function playSoundIfFree(name) {
     playSound(name);
 }
 
-
-/**
- * Spielt einen Sound in Dauerschleife, falls er nicht schon läuft.
- * @param {string} name - Name des Sounds
- */
+/** Plays a sound on loop if it's not already playing. */
 function loopSound(name) {
     if (isMuted || !audioContext || !soundBuffers[name] || isSoundPlaying(name)) {
         return;
@@ -242,29 +168,18 @@ function loopSound(name) {
     startSource(name, soundBuffers[name], soundFiles[name].volume, true, offset);
 }
 
-
-/**
- * Stoppt alle Sounds mit diesem Namen.
- * @param {string} name - Name des Sounds
- */
+/** Stops all sounds with this name. */
 function stopSound(name) {
     activeSources.filter((entry) => entry.name == name).forEach(stopEntry);
 }
 
-
-/**
- * Stoppt alle Sounds und setzt das Musiktempo zurück.
- */
+/** Stops all sounds and resets the music tempo. */
 function stopAllSounds() {
     activeSources.slice().forEach(stopEntry);
     musicSpeed = 1;
 }
 
-
-/**
- * Ändert das Tempo der Hintergrundmusik.
- * @param {number} speed - 1 ist normal, größer ist schneller
- */
+/** Changes the tempo of the background music. */
 function setMusicSpeed(speed) {
     musicSpeed = speed;
     activeSources.filter((entry) => entry.name == 'music').forEach((entry) => {
@@ -272,10 +187,7 @@ function setMusicSpeed(speed) {
     });
 }
 
-
-/**
- * Spielt den nächsten Wurf-Sound der Flasche ab.
- */
+/** Plays the next throw sound of the bottle. */
 function playSwitchSound() {
     let list = switchBuffers.filter((buffer) => buffer);
     if (isMuted || !audioContext || list.length == 0) {
@@ -285,10 +197,7 @@ function playSwitchSound() {
     switchIndex++;
 }
 
-
-/**
- * Spielt die Sounds des Endbosses nacheinander ab (jeder höchstens 3 Sekunden).
- */
+/** Plays the sounds of the final boss one after the other (each for no more than 3 seconds). */
 function loopEndbossSounds() {
     let now = new Date().getTime();
     let list = endbossBuffers.filter((buffer) => buffer);
@@ -302,19 +211,13 @@ function loopEndbossSounds() {
     endbossIndex++;
 }
 
-
-/**
- * Stoppt die Sounds des Endbosses.
- */
+/** Stops the sounds of the final boss. */
 function stopEndbossSounds() {
     stopSound('endboss');
     endbossNextPlay = 0;
 }
 
-
-/**
- * Schaltet den Ton nach einem Klick frei (Pflicht auf dem iPhone).
- */
+/** Unlocks the sound after a click (mandatory on iPhone). */
 function unlockSounds() {
     if (!audioContext) {
         return;
@@ -326,20 +229,14 @@ function unlockSounds() {
     source.start(0);
 }
 
-
-/**
- * Hält alle Sounds an.
- */
+/** stops sound */
 function pauseSounds() {
     if (audioContext) {
         audioContext.suspend();
     }
 }
 
-
-/**
- * Setzt die Sounds nach einer Pause fort.
- */
+/** Resumes the sounds after a pause. */
 function resumeSounds() {
     if (audioContext) {
         audioContext.resume();
@@ -347,10 +244,7 @@ function resumeSounds() {
     }
 }
 
-
-/**
- * Schaltet den Ton ein oder aus und speichert die Wahl im Local Storage.
- */
+/** Turns the sound on or off and saves the choice in local storage */
 function toggleMute() {
     isMuted = !isMuted;
     localStorage.setItem('isMuted', isMuted);
@@ -363,10 +257,7 @@ function toggleMute() {
     }
 }
 
-
-/**
- * Passt die Beschriftung des Ton-Buttons an.
- */
+/** Adjusts the label of the sound button. */
 function updateMuteButton() {
     let button = document.getElementById('muteButton');
     if (isMuted) {
@@ -376,10 +267,7 @@ function updateMuteButton() {
     }
 }
 
-
-/**
- * Startet die Menümusik oder die Spielmusik, je nachdem wo man ist.
- */
+/** Starts the menu music or the game music, depending on where you are. */
 function playBackgroundMusic() {
     if (isStartScreenVisible()) {
         loopSound('menu');
@@ -388,14 +276,9 @@ function playBackgroundMusic() {
     }
 }
 
-
-/**
- * Prüft, ob der Startbildschirm sichtbar ist.
- * @returns {boolean} true, wenn der Startbildschirm sichtbar ist
- */
+/** Checks if the home screen is visible. */
 function isStartScreenVisible() {
     return !document.getElementById('startScreen').classList.contains('d-none');
 }
-
 
 window.addEventListener('load', loadAllSounds);

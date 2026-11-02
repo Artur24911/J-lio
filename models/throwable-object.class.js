@@ -1,6 +1,3 @@
-/**
- * Eine geworfene Flasche.
- */
 class ThrowableObject extends MovableObject {
     hasSplashed = false;
     isRemovable = false;
@@ -21,13 +18,7 @@ class ThrowableObject extends MovableObject {
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
     ];
 
-
-    /**
-     * Erzeugt eine Flasche und wirft sie sofort.
-     * @param {number} x - Startposition
-     * @param {number} y - Starthöhe
-     * @param {boolean} otherDirection - true, wenn nach links geworfen wird
-     */
+    /** Spawns a bottle and throws it immediately. */
     constructor(x, y, otherDirection) {
         super().loadImage('img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png');
         this.loadImages(this.IMAGES_BOTTLEROTATION);
@@ -41,20 +32,14 @@ class ThrowableObject extends MovableObject {
         this.animate();
     }
 
-
-    /**
-     * Startet den Flug der Flasche mit Schwerkraft.
-     */
+    /** Start the flight of the bottle with gravity. */
     throw() {
-        this.speedY = 30;
+        this.speedY = 25;
         this.applyGravity();
         this.moveInterval = setInterval(() => this.updateFlight(), 25);
     }
 
-
-    /**
-     * Bewegt die Flasche in Wurfrichtung und lässt sie am Boden platzen.
-     */
+    /** Move the bottle in the throwing direction and let it burst on the ground. */
     updateFlight() {
         this.x += this.otherDirection ? -10 : 10;
         if (this.y >= 370) {
@@ -62,10 +47,7 @@ class ThrowableObject extends MovableObject {
         }
     }
 
-
-    /**
-     * Dreht die Flasche und spielt dabei die Wurf-Sounds.
-     */
+    /** Spin the bottle and play the throwing sounds while doing it. */
     animate() {
         this.rotationInterval = setInterval(() => {
             this.playAnimation(this.IMAGES_BOTTLEROTATION);
@@ -73,10 +55,7 @@ class ThrowableObject extends MovableObject {
         }, 1000 / 20);
     }
 
-
-    /**
-     * Lässt die Flasche platzen (einmalig) und startet die Splash-Animation.
-     */
+    /** Makes the bottle burst (once) and starts the splash animation. */
     splash() {
         if (this.hasSplashed) {
             return;
@@ -88,20 +67,14 @@ class ThrowableObject extends MovableObject {
         this.splashInterval = setInterval(() => this.playSplashFrame(), 1000 / 15);
     }
 
-
-    /**
-     * Beendet Bewegung, Drehung und Schwerkraft der Flasche.
-     */
+    /** Stops the bottle's movement, rotation, and gravity. */
     stopFlight() {
         clearInterval(this.moveInterval);
         clearInterval(this.rotationInterval);
         clearInterval(this.gravityInterval);
     }
 
-
-    /**
-     * Zeigt das nächste Splash-Bild und markiert die Flasche am Ende als entfernbar.
-     */
+    /** Show the next splash image and mark the bottle at the end as removable. */
     playSplashFrame() {
         if (this.currentImage >= this.IMAGES_BOTTLESPLASH.length) {
             clearInterval(this.splashInterval);

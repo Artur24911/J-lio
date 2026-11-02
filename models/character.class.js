@@ -1,6 +1,3 @@
-/**
- * Der Spielercharakter Pepe.
- */
 class Character extends MovableObject {
     height = 350;
     speed = 10;
@@ -82,10 +79,7 @@ class Character extends MovableObject {
         bottom: 30
     };
 
-
-    /**
-     * Erzeugt den Charakter, lädt alle Bilder und startet Schwerkraft und Animationen.
-     */
+    /** Creates the character, loads all images, and starts gravity and animations. */
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -98,20 +92,14 @@ class Character extends MovableObject {
         this.animate();
     }
 
-
-    /**
-     * Startet die drei Schleifen für Bewegung, Animation und Idle.
-     */
+    /** Start the three loops for movement, animation, and idle  */
     animate() {
         setInterval(() => this.updateMovement(), 1000 / 60);
         setInterval(() => this.updateAnimation(), 50);
         setInterval(() => this.updateIdle(), 200);
     }
 
-
-    /**
-     * Bewegt den Charakter nach den gedrückten Tasten und führt die Kamera nach.
-     */
+    /** Moves the character according to the keys pressed and follows the camera. */
     updateMovement() {
         if (this.isDead()) {
             return;
@@ -122,10 +110,7 @@ class Character extends MovableObject {
         this.updateCamera();
     }
 
-
-    /**
-     * Läuft nach links oder rechts, solange die Grenzen des Levels es erlauben.
-     */
+    /** Runs to the left or right, as long as the boundaries of the level allow it. */
     handleWalking() {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
@@ -137,10 +122,7 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Springt einmal pro Tastendruck, wenn der Charakter am Boden steht.
-     */
+    /** Jumps once per key press when the character is on the ground. */
     handleJump() {
         if (this.world.keyboard.SPACE && !this.isAboveGround() && this.speedY <= 0) {
             this.jump();
@@ -149,20 +131,14 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Schiebt die Kamera je nach Blickrichtung weich nach links oder rechts.
-     */
+    /** Moves the camera smoothly to the left or right depending on the direction you're looking. */
     updateCamera() {
         let targetOffset = this.otherDirection ? 520 : 100;
         this.cameraOffset += (targetOffset - this.cameraOffset) * 0.1;
         this.world.camera_x = Math.min(-this.x + this.cameraOffset, 720);
     }
 
-
-    /**
-     * Wählt die passende Animation: Tod, Verletzt, Sprung oder Laufen.
-     */
+    /** Choose the appropriate animation: death, injured, jump, or run. */
     updateAnimation() {
         if (this.isDead()) {
             this.playDeathAnimation();
@@ -175,10 +151,7 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Spielt die Todesanimation einmal ab und bleibt beim letzten Bild.
-     */
+    /** Play the death animation once and stay on the last frame. */
     playDeathAnimation() {
         if (!this.deathStarted) {
             this.deathStarted = true;
@@ -189,10 +162,7 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Zeigt das Sprungbild passend zum Verlauf des Sprungs.
-     */
+    /** Shows the jump image according to the course of the jump. */
     showJumpImage() {
         let progress = (this.jumpSpeed - this.speedY) / (2 * this.jumpSpeed + this.acceleration);
         let index = Math.floor(progress * this.IMAGES_JUMPING.length);
@@ -200,10 +170,7 @@ class Character extends MovableObject {
         this.img = this.imageCache[this.IMAGES_JUMPING[index]];
     }
 
-
-    /**
-     * Spielt Idle- oder Schlaf-Animation und die zugehörigen Sounds.
-     */
+    /** Plays idle or sleep animation and the associated sounds. */
     updateIdle() {
         this.updateSleepSound();
         if (this.isIdle()) {
@@ -211,10 +178,7 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Spielt beim Einschlafen das Gähnen, danach den Schlaf-Sound in Schleife.
-     */
+    /** Plays yawning when falling asleep, then the sleep sound on loop.*/
     updateSleepSound() {
         let sleeping = this.isIdle() && this.isSleeping();
         if (sleeping && !this.wasSleeping) {
@@ -229,19 +193,13 @@ class Character extends MovableObject {
         this.wasSleeping = sleeping;
     }
 
-
-    /**
-     * Stoppt Gähnen und Schlaf-Sound.
-     */
+    /** Stops yawning and sleep sounds. */
     stopSleepSounds() {
         stopSound('yawn');
         stopSound('sleep');
     }
 
-
-    /**
-     * Merkt sich den Zeitpunkt der letzten Aktion des Spielers.
-     */
+    /** Remembers the time of the player's last action. */
     updateLastAction() {
         let keyboard = this.world.keyboard;
         if (keyboard.RIGHT || keyboard.LEFT || keyboard.SPACE || keyboard.C || this.isHurt()) {
@@ -249,21 +207,13 @@ class Character extends MovableObject {
         }
     }
 
-
-    /**
-     * Prüft, ob der Charakter nichts tut.
-     * @returns {boolean} true, wenn er steht
-     */
+    /** Checks if the character is doing nothing. */
     isIdle() {
         let keyboard = this.world.keyboard;
         return !this.isDead() && !this.isHurt() && !this.isAboveGround() && !keyboard.RIGHT && !keyboard.LEFT;
     }
 
-
-    /**
-     * Prüft, ob der Charakter länger als 10 Sekunden nichts getan hat.
-     * @returns {boolean} true, wenn er schläft
-     */
+    /** Checks if the character hasn't done anything for more than 10 seconds. */
     isSleeping() {
         return new Date().getTime() - this.lastAction > 10000;
     }

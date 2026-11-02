@@ -1,6 +1,3 @@
-/**
- * Die Spielwelt: verbindet Charakter, Level, Anzeigen und die Spielregeln.
- */
 class World {
     character = new Character();
     level = level1;
@@ -22,12 +19,7 @@ class World {
     IMAGE_GAME_OVER = 'img/You won, you lost/Game Over.png';
     IMAGE_YOU_WIN = 'img/You won, you lost/You won A.png';
 
-
-    /**
-     * Erzeugt die Welt, startet das Zeichnen und die Spielregeln.
-     * @param {HTMLCanvasElement} canvas - Die Zeichenfläche
-     * @param {Keyboard} keyboard - Die Tastenzustände
-     */
+    /** Generates the world, starts the drawing, and the game rules. */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -37,18 +29,12 @@ class World {
         this.run();
     }
 
-
-    /**
-     * Gibt dem Charakter einen Verweis auf die Welt.
-     */
+    /** Gives the character a reference to the world. */
     setWorld() {
         this.character.world = this;
     }
 
-
-    /**
-     * Prüft 30-mal pro Sekunde alle Spielregeln.
-     */
+    /** Checks all the game rules 30 times per second. */
     run() {
         setInterval(() => {
             this.checkCollisions();
@@ -62,10 +48,7 @@ class World {
         }, 1000 / 30);
     }
 
-
-    /**
-     * Wirft eine Flasche, wenn C gedrückt ist und die Wurfpause vorbei ist.
-     */
+    /** Throws a bottle when C is pressed and the throw cooldown is over. */
     checkThrowObjects() {
         let now = new Date().getTime();
         if (this.canThrow(now)) {
@@ -74,20 +57,12 @@ class World {
         }
     }
 
-
-    /**
-     * Prüft, ob gerade eine Flasche geworfen werden darf.
-     * @param {number} now - Aktuelle Zeit in Millisekunden
-     * @returns {boolean} true, wenn der Wurf erlaubt ist
-     */
+    /** Checks if a bottle can be thrown right now. */
     canThrow(now) {
         return this.keyboard.C && !this.character.isDead() && this.collectedBottles > 0 && now - this.lastThrow > 1000;
     }
 
-
-    /**
-     * Erzeugt eine geworfene Flasche in Blickrichtung des Charakters.
-     */
+    /** Spawns a thrown bottle in the character's line of sight.*/
     throwBottle() {
         let x = this.character.otherDirection ? this.character.x : this.character.x + 50;
         let bottle = new ThrowableObject(x, this.character.y + 150, this.character.otherDirection);
@@ -97,22 +72,14 @@ class World {
         this.statusBarBottle.setPercentage(this.collectedBottles * 10);
     }
 
-
-    /**
-     * Prüft, ob eine geworfene Flasche einen Gegner trifft.
-     */
+    /** Checks if a thrown bottle hits an opponent. */
     checkCollisionsBottle() {
         this.throwableObjects.forEach((bottle) => {
             this.level.enemies.forEach((enemy) => this.checkBottleHit(bottle, enemy));
         });
     }
 
-
-    /**
-     * Lässt eine Flasche platzen, wenn sie einen lebenden Gegner trifft.
-     * @param {ThrowableObject} bottle - Die geworfene Flasche
-     * @param {MovableObject} enemy - Der Gegner
-     */
+    /** Makes a bottle break when it hits a living opponent. */
     checkBottleHit(bottle, enemy) {
         if (!bottle.hasSplashed && !enemy.isDead() && bottle.isColliding(enemy)) {
             bottle.splash();
@@ -120,10 +87,7 @@ class World {
         }
     }
 
-
-    /**
-     * Sammelt Flaschen vom Boden ein (höchstens 10).
-     */
+    /** Pick up bottles from the ground (at most 10). */
     checkCollectBottles() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.collectedBottles < 10 && this.character.isColliding(bottle)) {
@@ -135,28 +99,18 @@ class World {
         });
     }
 
-
-    /**
-     * Entfernt Flaschen, deren Splash-Animation vorbei ist.
-     */
+    /** Removes bottles whose splash animation is finished. */
     removeSplashedBottles() {
         this.throwableObjects = this.throwableObjects.filter((bottle) => !bottle.isRemovable);
     }
 
-
-    /**
-     * Prüft Berührungen zwischen Charakter und Gegnern.
-     */
+    /** Checks for touches between the character and enemies. */
     checkCollisions() {
         this.level.enemies.forEach((enemy) => this.handleEnemyCollision(enemy));
         this.wasAboveGround = this.character.isAboveGround();
     }
 
-
-    /**
-     * Besiegt den Gegner bei einem Sprung von oben, sonst verletzt er den Charakter.
-     * @param {MovableObject} enemy - Der Gegner
-     */
+    /** Defeat the enemy with a jump from above, otherwise he will hurt the character. */
     handleEnemyCollision(enemy) {
         if (enemy.isDead() || !this.character.isColliding(enemy)) {
             return;
@@ -168,12 +122,7 @@ class World {
         }
     }
 
-
-    /**
-     * Prüft, ob der Charakter von oben auf den Gegner fällt.
-     * @param {MovableObject} enemy - Der Gegner
-     * @returns {boolean} true bei einem Sprung von oben
-     */
+    /** Checks if the character falls onto the enemy from above. */
     isStomp(enemy) {
         let isFalling = (this.character.isAboveGround() || this.wasAboveGround) && this.character.speedY < 0;
         let center = this.character.x + this.character.width / 2;
@@ -182,20 +131,14 @@ class World {
         return isFalling && center > enemyLeft && center < enemyRight;
     }
 
-
-    /**
-     * Zieht dem Charakter Leben ab und aktualisiert die Anzeige.
-     */
+    /** Drains life from the character and updates the display. */
     hurtCharacter() {
         this.character.hit();
         playSound('hitCharacter');
         this.statusBar.setPercentage(this.character.energy);
     }
 
-
-    /**
-     * Sammelt Münzen ein und aktualisiert die Münz-Anzeige.
-     */
+    /** Collect coins and update the coin display. */
     checkCollectCoins() {
         this.level.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
@@ -207,10 +150,7 @@ class World {
         });
     }
 
-
-    /**
-     * Zeichnet ein komplettes Bild und plant das nächste.
-     */
+    /** Draws a complete picture and plans the next one. */
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawBackground();
@@ -220,30 +160,21 @@ class World {
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
 
-
-    /**
-     * Zeichnet den Hintergrund mit Kamerabewegung.
-     */
+    /** Draws the background with camera movement. */
     drawBackground() {
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects);
         this.ctx.translate(-this.camera_x, 0);
     }
 
-
-    /**
-     * Zeichnet die drei Anzeigen fest am Bildrand.
-     */
+    /** Draw the three indicators firmly at the edge of the screen. */
     drawStatusBars() {
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
         this.addToMap(this.statusBarCoin);
     }
 
-
-    /**
-     * Zeichnet Charakter, Wolken, Flaschen, Münzen, Gegner und Wurf-Flaschen.
-     */
+    /** Draw characters, clouds, bottles, coins, enemies, and throwing bottles. */
     drawGameObjects() {
         this.ctx.translate(this.camera_x, 0);
         this.addToMap(this.character);
@@ -255,29 +186,19 @@ class World {
         this.ctx.translate(-this.camera_x, 0);
     }
 
-
-    /**
-     * Zeichnet das Endbild (Game Over oder You Win), falls vorhanden.
-     */
+    /** Draws the final image (Game Over or You Win), if present. */
     drawEndScreen() {
         if (this.endScreen) {
             this.ctx.drawImage(this.endScreen, 0, 0, this.canvas.width, this.canvas.height);
         }
     }
 
-
-    /**
-     * Stoppt das Zeichnen der Welt.
-     */
+    /** Stop drawing the world.en der Welt. */
     stop() {
         cancelAnimationFrame(this.animationFrame);
     }
 
-
-    /**
-     * Zeichnet alle Objekte einer Liste, die im sichtbaren Bereich sind.
-     * @param {DrawableObject[]} objects - Liste der Objekte
-     */
+    /** Draws all objects in a list that are within the visible area. */
     addObjectsToMap(objects) {
         objects.forEach((o) => {
             if (this.isOnScreen(o)) {
@@ -286,11 +207,7 @@ class World {
         });
     }
 
-
-    /**
-     * Zeichnet ein Objekt und spiegelt es, wenn es nach links schaut.
-     * @param {DrawableObject} mo - Das Objekt
-     */
+    /** Draws an object and flips it if it's looking to the left. */
     addToMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
@@ -301,11 +218,7 @@ class World {
         }
     }
 
-
-    /**
-     * Spiegelt die Zeichenfläche für ein Objekt.
-     * @param {DrawableObject} mo - Das Objekt
-     */
+    /** Mirrors the artboard for an object. */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
@@ -313,22 +226,13 @@ class World {
         mo.x = mo.x * -1;
     }
 
-
-    /**
-     * Macht die Spiegelung wieder rückgängig.
-     * @param {DrawableObject} mo - Das Objekt
-     */
+    /** Undo the mirroring. */
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
-
-    /**
-     * Fügt einem Gegner Schaden zu und spielt den passenden Sound.
-     * @param {MovableObject} enemy - Der Gegner
-     * @param {number} damage - Höhe des Schadens
-     */
+    /** Deals damage to an opponent and plays the matching sound.*/
     hitEnemy(enemy, damage) {
         enemy.hit(damage);
         if (enemy.isDead() && enemy instanceof Endboss) {
@@ -340,10 +244,7 @@ class World {
         }
     }
 
-
-    /**
-     * Prüft, ob das Spiel verloren oder gewonnen ist.
-     */
+    /** Checks if the game is lost or won. */
     checkGameEnd() {
         if (this.character.isDead()) {
             this.endGame(this.IMAGE_GAME_OVER, 'gameOver');
@@ -355,12 +256,7 @@ class World {
         });
     }
 
-
-    /**
-     * Beendet das Spiel einmalig und zeigt nach einer Sekunde das Endbild.
-     * @param {string} path - Pfad zum Endbild
-     * @param {string} soundName - Name des Endsounds
-     */
+    /** Ends the game once and shows the final screen after one second. */
     endGame(path, soundName) {
         if (this.gameEnded) {
             return;
@@ -370,12 +266,7 @@ class World {
         setTimeout(() => this.showEndScreen(path, soundName), 1000);
     }
 
-
-    /**
-     * Zeigt Endbild und Endsound, blendet die Bedienung aus und stoppt das Spiel.
-     * @param {string} path - Pfad zum Endbild
-     * @param {string} soundName - Name des Endsounds
-     */
+    /** Shows the final image and final sound, hides the controls, and stops the game. */
     showEndScreen(path, soundName) {
         this.endScreen = new Image();
         this.endScreen.src = path;
@@ -387,10 +278,7 @@ class World {
         stopEndbossSounds();
     }
 
-
-    /**
-     * Spielt einen Sound, wenn ein Huhn zum ersten Mal ins Bild kommt.
-     */
+    /** Plays a sound when a chicken appears on screen for the first time. */
     checkChickensEnterScreen() {
         this.level.enemies.forEach((enemy) => {
             if (!(enemy instanceof Endboss) && !enemy.isDead() && !enemy.hasEnteredScreen && this.isOnScreen(enemy)) {
@@ -400,12 +288,7 @@ class World {
         });
     }
 
-
-    /**
-     * Prüft, ob ein Objekt im sichtbaren Bereich der Kamera liegt.
-     * @param {DrawableObject} object - Das Objekt
-     * @returns {boolean} true, wenn es sichtbar ist
-     */
+    /** Checks if an object is within the camera's visible area. */
     isOnScreen(object) {
         let left = -this.camera_x;
         let right = -this.camera_x + this.canvas.width;

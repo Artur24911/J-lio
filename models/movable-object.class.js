@@ -1,24 +1,20 @@
-/**
- * Basisklasse für Objekte, die sich bewegen, springen und Schaden nehmen können.
- */
 class MovableObject extends DrawableObject {
     speed = 0.2;
     otherDirection = false;
     speedY = 0;
     acceleration = 2.5;
+   
     offset = {
         top: 0,
         left: 0,
         right: 0,
         bottom: 0
     };
+    
     energy = 100;
     lastHit = 0;
 
-
-    /**
-     * Lässt das Objekt fallen, wenn es in der Luft ist oder nach oben fliegt.
-     */
+    /** Makes the object drop when it's in the air or flying upward. */
     applyGravity() {
         this.gravityInterval = setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
@@ -28,11 +24,7 @@ class MovableObject extends DrawableObject {
         }, 1000 / 25);
     }
 
-
-    /**
-     * Prüft, ob das Objekt über dem Boden ist.
-     * @returns {boolean} true, wenn das Objekt in der Luft ist
-     */
+    /** Checks if the object is above the ground. */
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true;
@@ -40,47 +32,29 @@ class MovableObject extends DrawableObject {
         return this.y < 80;
     }
 
-
-    /**
-     * Bewegt das Objekt nach rechts.
-     */
+    /** Move the object to the right. */
     moveRight() {
         this.x += this.speed;
     }
 
-
-    /**
-     * Bewegt das Objekt nach links.
-     */
+    /** Move the object to the left. */
     moveLeft() {
         this.x -= this.speed;
     }
 
-
-    /**
-     * Zeigt das nächste Bild einer Bilderfolge.
-     * @param {string[]} images - Liste der Bildpfade
-     */
+    /** Show the next picture in a sequence of pictures. */
     playAnimation(images) {
         let i = this.currentImage % images.length;
         this.img = this.imageCache[images[i]];
         this.currentImage++;
     }
 
-
-    /**
-     * Lässt das Objekt springen.
-     */
+    /** Makes the object jump. */
     jump() {
         this.speedY = 35;
     }
 
-
-    /**
-     * Prüft, ob dieses Objekt ein anderes berührt (mit Offset).
-     * @param {MovableObject|DrawableObject} mo - Das andere Objekt
-     * @returns {boolean} true bei Berührung
-     */
+    /** Checks if this object is touching another one (with offset). */
     isColliding(mo) {
         return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
             this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
@@ -88,11 +62,7 @@ class MovableObject extends DrawableObject {
             this.y + this.offset.top < mo.y + mo.height - mo.offset.bottom;
     }
 
-
-    /**
-     * Zieht Energie ab und merkt sich den Zeitpunkt des Treffers.
-     * @param {number} [damage=5] - Höhe des Schadens
-     */
+    /** Drains energy and remembers the moment of the hit. */
     hit(damage = 5) {
         this.energy -= damage;
         if (this.energy < 0) {
@@ -102,21 +72,13 @@ class MovableObject extends DrawableObject {
         }
     }
 
-
-    /**
-     * Prüft, ob das Objekt gerade getroffen wurde (halbe Sekunde lang).
-     * @returns {boolean} true, wenn das Objekt verletzt ist
-     */
+    /** Checks if the object was just hit (for half a second). */
     isHurt() {
         let timePassed = (new Date().getTime() - this.lastHit) / 1000;
         return timePassed < 0.5;
     }
 
-
-    /**
-     * Prüft, ob die Energie aufgebraucht ist.
-     * @returns {boolean} true, wenn das Objekt tot ist
-     */
+    /** Checks if the energy is used up. */
     isDead() {
         return this.energy == 0;
     }

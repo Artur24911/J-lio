@@ -1,6 +1,3 @@
-/**
- * Kleines Huhn (Küken), das nach links läuft.
- */
 class Chicken extends MovableObject {
     hasEnteredScreen = false;
     energy = 1;
@@ -26,10 +23,7 @@ class Chicken extends MovableObject {
         bottom: 10
     };
 
-
-    /**
-     * Erzeugt ein Küken an einer zufälligen Position außerhalb des Bildes.
-     */
+    /** Spawns a chick at a random position outside the image. */
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -39,29 +33,20 @@ class Chicken extends MovableObject {
         this.animate();
     }
 
-
-    /**
-     * Startet die Schleifen für Bewegung und Animation.
-     */
+    /** Starts the loops for movement and animation. */
     animate() {
         setInterval(() => this.updateMovement(), 1000 / 60);
         setInterval(() => this.updateImage(), 1000 / 8);
     }
 
-
-    /**
-     * Läuft nach links, solange das Küken lebt.
-     */
+    /** Runs to the left as long as the chick is alive. */
     updateMovement() {
         if (!this.isDead()) {
             this.moveLeft();
         }
     }
 
-
-    /**
-     * Zeigt Laufbild oder, wenn tot, das Tot-Bild.
-     */
+    /** Shows running image or, if dead, the dead image. */
     updateImage() {
         if (this.isDead()) {
             this.showDeadImage();
@@ -70,10 +55,7 @@ class Chicken extends MovableObject {
         }
     }
 
-
-    /**
-     * Zeigt kurz das Tot-Bild und danach dauerhaft das Kreuz.
-     */
+    /** Briefly shows the death image and then permanently the cross. */
     showDeadImage() {
         let index = this.isHurt() ? 0 : 1;
         this.img = this.imageCache[this.IMAGES_DEAD[index]];

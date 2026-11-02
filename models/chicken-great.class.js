@@ -1,6 +1,3 @@
-/**
- * Großes Huhn, das schneller nach links läuft.
- */
 class ChickenGreat extends MovableObject {
     hasEnteredScreen = false;
     height = 90;
@@ -25,10 +22,7 @@ class ChickenGreat extends MovableObject {
         'img/grabkreuz_chicken_spiel.png'
     ];
 
-
-    /**
-     * Erzeugt ein großes Huhn an einer zufälligen Position außerhalb des Bildes.
-     */
+    /** Spawns a big chicken at a random position outside the picture. */
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.loadImages(this.IMAGES_WALKING);
@@ -38,29 +32,20 @@ class ChickenGreat extends MovableObject {
         this.animate();
     }
 
-
-    /**
-     * Startet die Schleifen für Bewegung und Animation.
-     */
+    /** Starts the loops for movement and animation. */
     animate() {
         setInterval(() => this.updateMovement(), 1000 / 30);
         setInterval(() => this.updateImage(), 1000 / 8);
     }
 
-
-    /**
-     * Läuft nach links, solange das Huhn lebt.
-     */
+    /** Runs to the left as long as the chicken is alive. */
     updateMovement() {
         if (!this.isDead()) {
             this.moveLeft();
         }
     }
 
-
-    /**
-     * Zeigt Laufbild oder, wenn tot, das Tot-Bild.
-     */
+    /** Shows running image or, if dead, the dead image. */
     updateImage() {
         if (this.isDead()) {
             this.showDeadImage();
@@ -69,10 +54,7 @@ class ChickenGreat extends MovableObject {
         }
     }
 
-
-    /**
-     * Zeigt kurz das Tot-Bild und danach dauerhaft das Kreuz.
-     */
+    /** Briefly shows the death image and then permanently the cross. */
     showDeadImage() {
         let index = this.isHurt() ? 0 : 1;
         this.img = this.imageCache[this.IMAGES_DEAD[index]];

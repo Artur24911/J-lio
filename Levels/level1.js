@@ -1,9 +1,6 @@
 let level1;
 
-
-/**
- * Erzeugt Level 1 mit Gegnern, Wolken, Hintergrund, Flaschen und Münzen.
- */
+/** Generates Level 1 with enemies, clouds, background, bottles, and coins. */
 function initLevel() {
     level1 = new Level(
         createEnemies(),
@@ -14,11 +11,7 @@ function initLevel() {
     );
 }
 
-
-/**
- * Erzeugt die Gegner des Levels.
- * @returns {MovableObject[]} Liste der Gegner
- */
+/** Generates the enemies of the level. */
 function createEnemies() {
     return [
         new Chicken(),
@@ -31,11 +24,7 @@ function createEnemies() {
     ];
 }
 
-
-/**
- * Erzeugt den Hintergrund aus fünf Abschnitten (x von -720 bis 2160).
- * @returns {BackgroundObject[]} Liste der Hintergrundbilder
- */
+/** Generates the background from five sections (x from -720 to 2160). */
 function createBackgroundObjects() {
     let objects = [];
     for (let i = -1; i <= 3; i++) {
@@ -45,13 +34,7 @@ function createBackgroundObjects() {
     return objects;
 }
 
-
-/**
- * Erzeugt einen Hintergrundabschnitt aus vier Ebenen.
- * @param {number} x - Startposition des Abschnitts
- * @param {number} variant - 1 oder 2 (welches Bild der Ebene)
- * @returns {BackgroundObject[]} Die vier Ebenen des Abschnitts
- */
+/** Creates a background section from four layers. */
 function createBackgroundSection(x, variant) {
     let path = 'img/5_background/layers/';
     return [
@@ -62,11 +45,7 @@ function createBackgroundSection(x, variant) {
     ];
 }
 
-
-/**
- * Verteilt zehn Flaschen zufällig auf dem Boden.
- * @returns {Bottle[]} Liste der Flaschen
- */
+/** Scatter ten bottles randomly on the floor. */
 function createBottles() {
     let bottles = [];
     for (let i = 0; i < 10; i++) {
@@ -75,11 +54,7 @@ function createBottles() {
     return bottles;
 }
 
-
-/**
- * Erzeugt die Münzen an festen Positionen (auf Laufhöhe und in der Luft).
- * @returns {Coin[]} Liste der Münzen
- */
+/** Generates the coins at fixed positions (at running height and in the air). */
 function createCoins() {
     let positions = [
         [450, 320], [500, 320], [900, 160], [960, 110], [1020, 70],

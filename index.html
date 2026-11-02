@@ -51,6 +51,7 @@
             <div id="startButtons" class="start-buttons d-none">
                 <button class="game-button" onclick="showElement('helpDialog')">Anleitung</button>
                 <button class="game-button big" onclick="startGame()">Start</button>
+                <button class="game-button" onclick="openImpressum()">Impressum</button>
                
             </div>
 
@@ -76,7 +77,14 @@
                         wirfst. Besiege den Endboss, um zu gewinnen.</p>
                 </div>
             </div>
-
+             <div id="impressumDialog" class="dialog-backdrop d-none" onclick="closeImpressum()">
+            <div class="dialog" onclick="event.stopPropagation()">
+                <button class="close-button" onclick="closeImpressum()">X</button>
+                <h2>Impressum</h2>
+                <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
+                <p>E-Mail: beispiel@example.com</p>
+            </div>
+        </div>
         </div>
 
         <canvas id="canvas" class="d-none" width="720" height="480"></canvas>
@@ -107,19 +115,12 @@
                     <button id="fullscreenButton" class="game-button" onclick="toggleFullscreen()">Vollbild</button>
                     <button id="muteButton" class="game-button" onclick="toggleMute()">Ton an</button>
                     <button id="quitButton" class="game-button" onclick="quitGame()">Spiel abbrechen</button>
-                    <button class="game-button" onclick="openImpressum()">Impressum</button>
+                    
                 </div>
             </div>
         </div>
 
-        <div id="impressumDialog" class="dialog-backdrop d-none" onclick="closeImpressum()">
-            <div class="dialog" onclick="event.stopPropagation()">
-                <button class="close-button" onclick="closeImpressum()">X</button>
-                <h2>Impressum</h2>
-                <p>Max Mustermann<br>Musterstraße 1<br>12345 Musterstadt</p>
-                <p>E-Mail: beispiel@example.com</p>
-            </div>
-        </div>
+       
         <div id="loadingScreen" class="loading-screen d-none">
             <p>Lädt ...</p>
         </div>
