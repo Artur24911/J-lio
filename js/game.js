@@ -58,6 +58,7 @@ function goHome() {
     stopCurrentGame();
     hideElement('canvas');
     hideElement('touchControls');
+    showElement('settingsButton');
     showElement('startScreen');
     playBackgroundMusic();
     prepareGame();
@@ -67,10 +68,20 @@ function stopCurrentGame() {
     world.stop();
     stopGame();
     stopAllSounds();
+    resetKeyboard();
     hideElement('endButtons');
     isPaused = false;
     isGameStarted = false;
     isPrepared = false;
+}
+
+function resetKeyboard() {
+    keyboard.LEFT = false;
+    keyboard.RIGHT = false;
+    keyboard.UP = false;
+    keyboard.DOWN = false;
+    keyboard.SPACE = false;
+    keyboard.C = false;
 }
 
 window.addEventListener('load', prepareGame);
@@ -274,6 +285,8 @@ function prepareGame() {
 
 function beginGame() {
     showElement('loadingScreen');
+    showElement('touchControls');
+    showElement('settingsButton');
     prepareGame();
     waitForImages(finishLoading);
 }

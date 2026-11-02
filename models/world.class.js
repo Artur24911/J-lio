@@ -172,13 +172,13 @@ class World {
         cancelAnimationFrame(this.animationFrame);
     }
 
-   addObjectsToMap(objects) {
-    objects.forEach((o) => {
-        if (this.isOnScreen(o)) {
-            this.addToMap(o);
-        }
-    });
-}
+    addObjectsToMap(objects) {
+        objects.forEach((o) => {
+            if (this.isOnScreen(o)) {
+                this.addToMap(o);
+            }
+        });
+    }
 
     addToMap(mo) {
         if (mo.otherDirection) {
@@ -239,6 +239,8 @@ class World {
             this.endScreen.src = path;
             playSound(soundName);
             showElement('endButtons');
+            hideElement('touchControls');
+            hideElement('settingsButton');
             stopGame();
             stopEndbossSounds();
         }, 1000);
