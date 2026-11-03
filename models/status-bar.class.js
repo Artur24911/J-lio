@@ -38,15 +38,15 @@ class StatusBar extends DrawableObject {
     percentage = 100;
 
     /** Generates a status display. */
-    constructor(type, y) {
+    constructor(type, y, x = 10) {
         super();
         this.images = this.getImages(type);
         this.loadImages(this.images);
-        this.x = 10;
+        this.x = x;
         this.y = y;
         this.width = 200;
         this.height = 40;
-        this.setPercentage(type == 'health' ? 100 : 0);
+        this.setPercentage(type == 'bottle' || type == 'coin' ? 0 : 100);
     }
 
     /** Delivers the image sequence matching the type. */
@@ -56,6 +56,9 @@ class StatusBar extends DrawableObject {
         }
         if (type == 'coin') {
             return this.STATUS_COIN;
+        }
+        if (type == 'endboss') {
+            return this.STATUS_ENDBOSS;
         }
         return this.STATUS_HEALTH;
     }

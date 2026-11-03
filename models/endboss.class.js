@@ -1,5 +1,6 @@
 class Endboss extends MovableObject {
-    energy = 3;
+    energy = 5;
+    maxEnergy = 5;
     height = 400;
     width = 230;
     y = 45;
@@ -119,13 +120,6 @@ class Endboss extends MovableObject {
         }
     }
 
-    /** Runs towards the character as long as the boss is chasing him. */
-    updateChase() {
-        if (this.isChasing) {
-            this.chaseCharacter();
-        }
-    }
-
     /** Runs towards the character and turns around while doing so. */
     chaseCharacter() {
         let distance = (world.character.x + world.character.width / 2) - (this.x + this.width / 2);
@@ -150,7 +144,7 @@ class Endboss extends MovableObject {
             setMusicSpeed(1);
         }
     }
-    
+
     /** Updates the boss's attack state and chases the character if not attacking. */
     updateChase() {
         this.updateAttack();
@@ -166,5 +160,10 @@ class Endboss extends MovableObject {
         if (this.isAttacking && !wasAttacking) {
             this.currentImage = 0;
         }
+    }
+
+    /** Checks if the boss has started moving after the alert animation (stays true afterwards). */
+    hasStartedChase() {
+        return this.hadFirstContact && this.stateTick >= 10;
     }
 }

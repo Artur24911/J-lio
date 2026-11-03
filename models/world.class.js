@@ -9,6 +9,7 @@ class World {
     statusBar = new StatusBar('health', 0);
     statusBarBottle = new StatusBar('bottle', 40);
     statusBarCoin = new StatusBar('coin', 80);
+    statusBarEndboss = new StatusBar('endboss', 0, 450);
     collectedBottles = 0;
     collectedCoins = 0;
     lastThrow = 0;
@@ -116,10 +117,15 @@ class World {
             return;
         }
         if (this.isStomp(enemy)) {
-            this.hitEnemy(enemy, enemy.energy);
+            this.hitEnemy(enemy, this.getStompDamage(enemy));
         } else if (!this.character.isHurt()) {
             this.hurtCharacter();
         }
+    }
+
+    /** Damage from a jump from above: chickens die, the boss loses a hit. */
+    getStompDamage(enemy) {
+        return enemy instanceof Endboss ? 1 : enemy.energy;
     }
 
     /** Checks if the character falls onto the enemy from above. */
@@ -167,11 +173,14 @@ class World {
         this.ctx.translate(-this.camera_x, 0);
     }
 
-    /** Draw the three indicators firmly at the edge of the screen. */
+    /** Draws the background with camera movement. */
     drawStatusBars() {
         this.addToMap(this.statusBar);
         this.addToMap(this.statusBarBottle);
         this.addToMap(this.statusBarCoin);
+        if (this.getEndboss().hasStartedChase()) {
+            this.addToMap(this.statusBarEndboss);
+        }
     }
 
     /** Draw characters, clouds, bottles, coins, enemies, and throwing bottles. */
@@ -234,13 +243,24 @@ class World {
 
     /** Deals damage to an opponent and plays the matching sound.*/
     hitEnemy(enemy, damage) {
+        if (enemy instanceof Endboss && enemy.isHurt()) {
+            return;
+        }
         enemy.hit(damage);
-        if (enemy.isDead() && enemy instanceof Endboss) {
+        if (enemy instanceof Endboss) {
+            this.onEndbossHit(enemy);
+        } else if (enemy.isDead()) {
+            playSound('chickenDead');
+        }
+    }
+
+    /** Updates the boss display and plays the sounds when he dies. */
+    onEndbossHit(endboss) {
+        this.statusBarEndboss.setPercentage(endboss.energy * 100 / endboss.maxEnergy);
+        if (endboss.isDead()) {
             playSound('endbossDead');
             stopEndbossSounds();
             setMusicSpeed(1);
-        } else if (enemy.isDead()) {
-            playSound('chickenDead');
         }
     }
 
@@ -293,5 +313,10 @@ class World {
         let left = -this.camera_x;
         let right = -this.camera_x + this.canvas.width;
         return object.x < right && object.x + object.width > left;
+    }
+
+    /** Look for the final boss in the enemy list. */
+    getEndboss() {
+        return this.level.enemies.find((enemy) => enemy instanceof Endboss);
     }
 }
