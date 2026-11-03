@@ -8,6 +8,7 @@ class Endboss extends MovableObject {
     deathStarted = false;
     hadFirstContact = false;
     stateTick = 0;
+    isAttacking = false;
 
     offset = {
         top: 100,
@@ -66,6 +67,7 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.x = 2550;
         this.animate();
+        this.loadImages(this.IMAGES_ATTAK);
     }
 
     /** Starts the loops for state and tracking. */
@@ -89,6 +91,8 @@ class Endboss extends MovableObject {
             this.playDeathAnimation();
         } else if (this.isHurt()) {
             this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isAttacking) {
+            this.playAnimation(this.IMAGES_ATTAK);
         } else if (this.stateTick < 10) {
             this.playAnimation(this.IMAGES_ALERT);
         } else {
@@ -124,12 +128,15 @@ class Endboss extends MovableObject {
 
     /** Runs towards the character and turns around while doing so. */
     chaseCharacter() {
-        if (world.character.x < this.x) {
+        let distance = (world.character.x + world.character.width / 2) - (this.x + this.width / 2);
+        if (Math.abs(distance) < 10) {
+            return;
+        }
+        this.otherDirection = distance > 0;
+        if (distance < 0) {
             this.moveLeft();
-            this.otherDirection = false;
         } else {
             this.moveRight();
-            this.otherDirection = true;
         }
     }
 
@@ -141,6 +148,23 @@ class Endboss extends MovableObject {
         } else {
             stopEndbossSounds();
             setMusicSpeed(1);
+        }
+    }
+    
+    /** Updates the boss's attack state and chases the character if not attacking. */
+    updateChase() {
+        this.updateAttack();
+        if (this.isChasing && !this.isAttacking) {
+            this.chaseCharacter();
+        }
+    }
+
+    /** Updates the boss's attack state based on whether it is chasing and colliding with the character. */
+    updateAttack() {
+        let wasAttacking = this.isAttacking;
+        this.isAttacking = this.isChasing && this.isColliding(world.character);
+        if (this.isAttacking && !wasAttacking) {
+            this.currentImage = 0;
         }
     }
 }
